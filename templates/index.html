@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Generator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        #book-content {
+            white-space: pre-wrap;
+            font-size: 16px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .api-key-input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        h1, h2 {
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .chapter {
+            margin-top: 30px;
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book Generator</h1>
+    <form id="book-form">
+        <label for="api_key">OpenAI API Key:</label>
+        <input type="password" id="api_key" name="api_key" required class="api-key-input"><br><br>
+        <label for="topic">Book Topic:</label>
+        <input type="text" id="topic" name="topic" required><br><br>
+        <label for="word_count">Target Word Count:</label>
+        <input type="number" id="word_count" name="word_count" value="10000" required><br><br>
+        <button type="submit">Generate Book</button>
+    </form>
+    <div id="progress"></div>
+    <div id="book-content"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#book-form').submit(function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $('#progress').text('Generating book...');
+                $('#book-content').empty();
+                $.ajax({
+                    url: '/generate',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        var formattedContent = response.content.replace(/Chapter \d+/g, function(match) {
+                            return '<h2 class="chapter">' + match + '</h2>';
+                        });
+                        $('#book-content').html(formattedContent);
+                        $('#progress').text('Book generated! Word count: ' + response.word_count);
+                    },
+                    error: function() {
+                        $('#progress').text('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
