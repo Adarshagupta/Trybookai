@@ -19,10 +19,13 @@ Installation
 ```
 git clone https://github.com/Adarshagupta/BookAI/
 ```
-`cd BookAI`
+2. Change the directory
+```
+cd BookAI
+```
 
     
-2.  Copy
+4.  Copy
 
 `pip install openai`
     
