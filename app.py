@@ -1,18 +1,18 @@
 import time
 from flask import Flask, render_template, request, jsonify
-from openai import OpenAI
+import openai
 
 app = Flask(__name__)
 
 def generate_chunk(api_key, topic, current_word_count, is_new_chapter=False):
-    client = OpenAI(api_key=api_key)
+    openai.api_key = api_key
     if is_new_chapter:
         prompt = f"Write the beginning of a new chapter for a book about {topic}. This is around word {current_word_count} of the book. Start with a chapter title."
     else:
         prompt = f"Continue writing a book about {topic}. This is around word {current_word_count} of the book. Make sure the narrative flows smoothly from the previous section."
     
     try:
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are an author writing a book. Format your response as a part of a book chapter."},
@@ -20,7 +20,7 @@ def generate_chunk(api_key, topic, current_word_count, is_new_chapter=False):
             ],
             max_tokens=500
         )
-        return response.choices[0].message.content.strip()
+        return response.choices[0].message['content'].strip()
     except Exception as e:
         print(f"An error occurred: {e}")
         time.sleep(60)
