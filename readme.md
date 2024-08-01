@@ -16,7 +16,7 @@ Installation
 
 1.  Clone this repository or download the script file.
 
-`git clone https://github.com/Adarshagupta/BookAI/`
+```git clone https://github.com/Adarshagupta/BookAI/```
 `cd BookAI`
     
 2.  Copy
