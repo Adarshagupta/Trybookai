@@ -25,13 +25,18 @@ cd BookAI
 ```
 
     
-4.  Copy
+3.  Copy
 
-`pip install openai`
+```
+pip install openai
+```
     
-3.  Open the script in a text editor and replace "your\_api\_key\_here" with your actual OpenAI API key.
+4.  Open the script in a text editor and replace "your\_api\_key\_here" with your actual OpenAI API key.
 
-4.  Run the projecct
+5.  Run the project
+```
+python book.py
+```
     
 
 Usage
