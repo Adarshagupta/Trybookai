@@ -15,8 +15,12 @@ Installation
 ------------
 
 1.  Clone this repository or download the script file.
+
+`git clone https://github.com/Adarshagupta/BookAI/`
     
-2.  Copypip install openai
+2.  Copy
+
+`pip install openai`
     
 3.  Open the script in a text editor and replace "your\_api\_key\_here" with your actual OpenAI API key.
     
