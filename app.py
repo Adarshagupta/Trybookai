@@ -2,19 +2,18 @@ import time
 import traceback
 from flask import Flask, render_template, request, jsonify, send_file
 import openai
-from fpdf import FPDF
-import io
-import textwrap
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
+import io
+import asyncio
+import aiohttp
 
 app = Flask(__name__)
 
-def generate_chunk(api_key, topic, current_word_count, is_new_chapter=False):
+async def generate_chunk(api_key, model, topic, current_word_count, is_new_chapter=False):
     openai.api_key = api_key
     if is_new_chapter:
         prompt = f"Write the beginning of a new chapter for a book about {topic}. This is around word {current_word_count} of the book. Start with a chapter title."
@@ -22,19 +21,25 @@ def generate_chunk(api_key, topic, current_word_count, is_new_chapter=False):
         prompt = f"Continue writing a book about {topic}. This is around word {current_word_count} of the book. Make sure the narrative flows smoothly from the previous section."
     
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are an author writing a book. Format your response as a part of a book chapter."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=500
-        )
-        return response.choices[0].message['content'].strip()
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {api_key}"},
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": "You are an author writing a book. Format your response as a part of a book chapter."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    "max_tokens": 500
+                }
+            ) as response:
+                result = await response.json()
+                return result['choices'][0]['message']['content'].strip()
     except Exception as e:
         print(f"An error occurred: {e}")
-        time.sleep(60)
-        return generate_chunk(api_key, topic, current_word_count, is_new_chapter)
+        await asyncio.sleep(60)
+        return await generate_chunk(api_key, model, topic, current_word_count, is_new_chapter)
 
 def create_pdf(content, title):
     buffer = io.BytesIO()
@@ -76,41 +81,43 @@ def index():
     return render_template('index.html')
 
 @app.route('/generate', methods=['POST'])
-def generate_book():
+async def generate_book():
     api_key = request.form['api_key']
+    model = request.form['model']
     topic = request.form['topic']
     target_word_count = int(request.form['word_count'])
     current_word_count = 0
     book_content = []
     chapter_count = 0
 
+    tasks = []
     while current_word_count < target_word_count:
         is_new_chapter = (chapter_count == 0) or (current_word_count > 0 and current_word_count % 3000 < 500)
         
         if is_new_chapter:
             chapter_count += 1
-            chunk = f"\n\nChapter {chapter_count}\n\n" + generate_chunk(api_key, topic, current_word_count, is_new_chapter=True)
+            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count, is_new_chapter=True))
         else:
-            chunk = generate_chunk(api_key, topic, current_word_count)
+            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count))
         
-        words = chunk.split()
-        chunk_word_count = len(words)
+        tasks.append(task)
+        current_word_count += 500  # Approximate word count per chunk
         
-        if current_word_count + chunk_word_count > target_word_count:
-            words = words[:target_word_count - current_word_count]
-            chunk = " ".join(words)
-        
-        book_content.append(chunk)
-        current_word_count += len(words)
-        
-        # Add a small delay to avoid hitting rate limits
-        time.sleep(1)
+        if len(tasks) >= 5 or current_word_count >= target_word_count:
+            chunks = await asyncio.gather(*tasks)
+            for i, chunk in enumerate(chunks):
+                if i == 0 and is_new_chapter:
+                    chunk = f"\n\nChapter {chapter_count}\n\n" + chunk
+                book_content.append(chunk)
+            tasks = []
+            await asyncio.sleep(1)  # Small delay to avoid rate limits
 
     formatted_book = "\n\n".join(book_content)
+    actual_word_count = len(formatted_book.split())
 
     return jsonify({
         'content': formatted_book,
-        'word_count': current_word_count
+        'word_count': actual_word_count
     })
 
 @app.route('/download-pdf', methods=['POST'])
