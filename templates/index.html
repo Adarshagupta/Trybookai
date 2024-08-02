@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Book Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e74c3c;
-            --accent-color: #f39c12;
-            --background-color: #ecf0f1;
-            --text-color: #34495e;
-            --book-bg-color: #fff;
-            --book-text-color: #2c3e50;
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #ff8a00;
+            --background-color: #f0f3ff;
+            --book-bg-color: #ffffff;
+            --book-text-color: #333333;
             --form-bg-color: rgba(255, 255, 255, 0.9);
+            --error-color: #e74c3c;
         }
-        
 
         * {
             margin: 0;
@@ -29,39 +28,57 @@
         body {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--background-color);
-            background-image: url('https://source.unsplash.com/1600x900/?library,books');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            color: var(--book-text-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
             align-items: flex-start;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
         .form-container {
-            width: 100%;
-            max-width: 400px;
+            width: 400px;
             background-color: var(--form-bg-color);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-right: 30px;
         }
 
         .book-container {
-            width: 100%;
-            max-width: 900px;
-            perspective: 1500px;
+            width: 595px; /* A4 width in pixels */
+            height: 842px; /* A4 height in pixels */
+            background-color: var(--book-bg-color);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book {
+            flex-grow: 1;
+            padding: 40px;
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--book-text-color);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: var(--form-bg-color);
         }
 
         h1 {
@@ -97,13 +114,13 @@
 
         input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+            box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.2);
             outline: none;
             background-color: #fff;
         }
 
         button {
-            background-color: var(--primary-color);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 14px 20px;
             border: none;
@@ -118,7 +135,7 @@
         }
 
         button:hover {
-            background-color: var(--secondary-color);
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -126,46 +143,8 @@
         #progress {
             margin-top: 20px;
             font-style: italic;
-            color: var(--primary-color);
+            color: var(--secondary-color);
             text-align: center;
-        }
-
-        .book {
-            width: 100%;
-            height: 800px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1s;
-        }
-
-        .page {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background-color: var(--book-bg-color);
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            transform-origin: left center;
-            overflow-y: auto;
-            backface-visibility: hidden;
-            transform: rotateY(0deg);
-            transition: transform 0.5s;
-        }
-
-        .page-content {
-            font-family: 'Merriweather', serif;
-            font-size: 18px;
-            line-height: 1.8;
-            color: var(--book-text-color);
-        }
-
-        .chapter {
-            margin-top: 30px;
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-color);
-            font-size: 24px;
         }
 
         .loading {
@@ -174,7 +153,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -183,7 +163,7 @@
 
         .loading-content {
             text-align: center;
-            color: #fff;
+            color: var(--primary-color);
         }
 
         .loading-spinner {
@@ -203,16 +183,16 @@
         }
 
         #download-pdf {
-            background-color: var(--accent-color);
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
             margin-top: 20px;
         }
 
         #download-pdf:hover {
-            background-color: #d35400;
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
         }
 
         .error-message {
-            color: var(--secondary-color);
+            color: var(--error-color);
             background-color: rgba(231, 76, 60, 0.1);
             padding: 15px;
             border-radius: 8px;
@@ -222,14 +202,8 @@
             backdrop-filter: blur(5px);
         }
 
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
         .control-button {
-            background-color: var(--primary-color);
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
             color: white;
             padding: 10px 15px;
             border: none;
@@ -239,12 +213,14 @@
         }
 
         .control-button:hover {
-            background-color: var(--secondary-color);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transform: translateY(-2px);
         }
 
         .control-button:disabled {
-            background-color: #bdc3c7;
+            background: #bdc3c7;
             cursor: not-allowed;
+            transform: none;
         }
 
         @media (max-width: 1200px) {
@@ -254,7 +230,10 @@
             }
 
             .form-container, .book-container {
-                max-width: 100%;
+                width: 100%;
+                max-width: 595px;
+                margin-right: 0;
+                margin-bottom: 30px;
             }
         }
     </style>
@@ -288,19 +267,17 @@
             </form>
             <div id="progress"></div>
             <button id="download-pdf" style="display: none;">Download as PDF</button>
+            <div id="error-message" class="error-message" style="display: none;"></div>
         </div>
         <div class="book-container">
             <div class="book">
-                <div class="page">
-                    <div class="page-content"></div>
-                </div>
+                <div class="page-content"></div>
             </div>
             <div class="controls">
                 <button class="control-button" id="prev-page" disabled>Previous Page</button>
                 <button class="control-button" id="next-page" disabled>Next Page</button>
             </div>
         </div>
-        <div id="error-message" class="error-message" style="display: none;"></div>
     </div>
 
     <div class="loading" style="display: none;">
@@ -325,8 +302,8 @@
                 if (currentPage > 0) {
                     currentPage--;
                     updatePageContent();
-                    gsap.to('.book', {rotationY: -180, duration: 1, onComplete: () => {
-                        gsap.set('.book', {rotationY: 0});
+                    gsap.to('.book', {opacity: 0, duration: 0.5, onComplete: () => {
+                        gsap.to('.book', {opacity: 1, duration: 0.5});
                     }});
                 }
             });
@@ -335,8 +312,8 @@
                 if (currentPage < bookContent.length - 1) {
                     currentPage++;
                     updatePageContent();
-                    gsap.to('.book', {rotationY: 180, duration: 1, onComplete: () => {
-                        gsap.set('.book', {rotationY: 0});
+                    gsap.to('.book', {opacity: 0, duration: 0.5, onComplete: () => {
+                        gsap.to('.book', {opacity: 1, duration: 0.5});
                     }});
                 }
             });
@@ -357,9 +334,7 @@
                     data: formData,
                     success: function(response) {
                         $('.loading').hide();
-                        bookContent = response.content.split(/(?=<h2 class="chapter">)/).map(function(chapter) {
-                            return chapter.replace(/<h2 class="chapter">(.*?)<\/h2>/, '<h2 class="chapter">$1</h2>');
-                        });
+                        bookContent = response.content.split(/(?<=\n\n)/);
                         currentPage = 0;
                         updatePageContent();
                         $('#progress').text('Book generated! Word count: ' + response.word_count);
@@ -376,7 +351,7 @@
 
             $('#download-pdf').click(function() {
                 var content = bookContent.join('');
-                var title = $('#topic').val(); // Removed " - AI Generated Book"
+                var title = $('#topic').val();
                 $('.loading').show();
                 $('#error-message').hide();
                 
