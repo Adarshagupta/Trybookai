@@ -4,19 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Book Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2575fc;
-            --accent-color: #ff8a00;
-            --background-color: #f0f3ff;
-            --book-bg-color: #ffffff;
-            --book-text-color: #333333;
-            --form-bg-color: rgba(255, 255, 255, 0.9);
-            --error-color: #e74c3c;
+            --primary-color: #4a90e2;
+            --secondary-color: #50c878;
+            --accent-color: #ff6b6b;
+            --background-color: #f7f9fc;
+            --text-color: #333;
+            --white: #ffffff;
         }
 
         * {
@@ -28,37 +26,81 @@
         body {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
-            color: var(--book-text-color);
-            background: #f0f3ff;
+            color: var(--text-color);
+            background-color: var(--background-color);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
+        }
+
+        .floating-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 15px 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style-type: none;
+        }
+
+        .nav-menu li {
+            margin: 0 15px;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary-color);
         }
 
         .container {
+            flex: 1;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            max-width: 1200px;
-            margin: 0 auto;
+            justify-content: center;
+            align-items: center;
             padding: 40px 20px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
         }
 
         .form-container {
             width: 400px;
-            background-color: var(--form-bg-color);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-right: 30px;
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            margin-right: 40px;
         }
 
         .book-container {
-            width: 595px; /* A4 width in pixels */
-            height: 842px; /* A4 height in pixels */
-            background-color: var(--book-bg-color);
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 595px;
+            height: 842px;
+            background-color: var(--white);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             border-radius: 10px;
             overflow: hidden;
             display: flex;
@@ -68,26 +110,22 @@
         .book {
             flex-grow: 1;
             padding: 40px;
-            font-family: 'Playfair Display', serif;
             font-size: 16px;
             line-height: 1.8;
-            color: var(--book-text-color);
+            color: var(--text-color);
+            overflow: hidden;
         }
 
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            background-color: var(--form-bg-color);
+        .page-content {
+            height: 100%;
+            overflow: hidden;
         }
 
         h1 {
-            font-family: 'Playfair Display', serif;
             color: var(--primary-color);
             text-align: center;
-            font-size: 2.8em;
+            font-size: 2.4em;
             margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .form-group {
@@ -97,47 +135,41 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 1em;
         }
 
         input[type="text"], input[type="password"], input[type="number"], select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
             font-size: 16px;
             transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.8);
         }
 
         input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.2);
+            border-color: var(--primary-color);
             outline: none;
-            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
         }
 
         button {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 14px 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 12px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 18px;
+            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 500;
         }
 
         button:hover {
-            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: #3a7bc8;
         }
 
         #progress {
@@ -167,11 +199,11 @@
         }
 
         .loading-spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--accent-color);
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
             display: inline-block;
             margin-bottom: 20px;
@@ -182,49 +214,58 @@
             100% { transform: rotate(360deg); }
         }
 
-        #download-pdf {
-            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
-            margin-top: 20px;
-        }
-
-        #download-pdf:hover {
-            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-        }
-
         .error-message {
-            color: var(--error-color);
-            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-color);
+            background-color: rgba(255, 107, 107, 0.1);
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 5px;
             margin-top: 20px;
             text-align: center;
             font-weight: 500;
-            backdrop-filter: blur(5px);
         }
 
         .control-button {
-            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--white);
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .control-button:hover {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            transform: translateY(-2px);
+            background-color: #45b168;
         }
 
         .control-button:disabled {
-            background: #bdc3c7;
+            background-color: #bdc3c7;
             cursor: not-allowed;
-            transform: none;
+        }
+
+        #download-pdf {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        #download-pdf:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
         }
 
         @media (max-width: 1200px) {
-            .container {
+            .content-wrapper {
                 flex-direction: column;
                 align-items: center;
             }
@@ -239,43 +280,53 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="form-container">
-            <h1>AI Book Generator</h1>
-            <form id="book-form">
-                <div class="form-group">
-                    <label for="api_key">OpenAI API Key:</label>
-                    <input type="password" id="api_key" name="api_key" required>
-                </div>
-                <div class="form-group">
-                    <label for="model">Model:</label>
-                    <select id="model" name="model" required>
-                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        <option value="gpt-4o-mini">gpt-4o-mini</option>
-                        <option value="gpt-4o-mini-2024-07-18">gpt-4o-mini-2024-07-18</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="topic">Book Topic:</label>
-                    <input type="text" id="topic" name="topic" required>
-                </div>
-                <div class="form-group">
-                    <label for="word_count">Target Word Count:</label>
-                    <input type="number" id="word_count" name="word_count" value="10000" required>
-                </div>
-                <button type="submit">Generate Book</button>
-            </form>
-            <div id="progress"></div>
-            <button id="download-pdf" style="display: none;">Download as PDF</button>
-            <div id="error-message" class="error-message" style="display: none;"></div>
+    <header class="floating-header">
+        <div class="header-content">
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
         </div>
-        <div class="book-container">
-            <div class="book">
-                <div class="page-content"></div>
+    </header>
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="form-container">
+                <h1>AI Book Generator</h1>
+                <form id="book-form">
+                    <div class="form-group">
+                        <label for="api_key">OpenAI API Key:</label>
+                        <input type="password" id="api_key" name="api_key" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="model">Model:</label>
+                        <select id="model" name="model" required>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            <option value="gpt-4o-mini">gpt-4o-mini</option>
+                            <option value="gpt-4o-mini-2024-07-18">gpt-4o-mini-2024-07-18</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="topic">Book Topic:</label>
+                        <input type="text" id="topic" name="topic" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="word_count">Target Word Count:</label>
+                        <input type="number" id="word_count" name="word_count" value="10000" required>
+                    </div>
+                    <button type="submit">Generate Book</button>
+                </form>
+                <div id="progress"></div>
+                <div id="error-message" class="error-message" style="display: none;"></div>
             </div>
-            <div class="controls">
-                <button class="control-button" id="prev-page" disabled>Previous Page</button>
-                <button class="control-button" id="next-page" disabled>Next Page</button>
+            <div class="book-container">
+                <div class="book">
+                    <div class="page-content"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -286,38 +337,11 @@
             <p>Generating your book...</p>
         </div>
     </div>
+    
+    <button id="download-pdf" style="display: none;">Download as PDF</button>
 
     <script>
-        $(document).ready(function() {
-            let bookContent = [];
-            let currentPage = 0;
-
-            function updatePageContent() {
-                $('.page-content').html(bookContent[currentPage]);
-                $('#prev-page').prop('disabled', currentPage === 0);
-                $('#next-page').prop('disabled', currentPage === bookContent.length - 1);
-            }
-
-            $('#prev-page').click(function() {
-                if (currentPage > 0) {
-                    currentPage--;
-                    updatePageContent();
-                    gsap.to('.book', {opacity: 0, duration: 0.5, onComplete: () => {
-                        gsap.to('.book', {opacity: 1, duration: 0.5});
-                    }});
-                }
-            });
-
-            $('#next-page').click(function() {
-                if (currentPage < bookContent.length - 1) {
-                    currentPage++;
-                    updatePageContent();
-                    gsap.to('.book', {opacity: 0, duration: 0.5, onComplete: () => {
-                        gsap.to('.book', {opacity: 1, duration: 0.5});
-                    }});
-                }
-            });
-
+       $(document).ready(function() {
             $('#book-form').submit(function(e) {
                 e.preventDefault();
                 var formData = $(this).serialize();
@@ -326,7 +350,6 @@
                 $('.loading').show();
                 $('#download-pdf').hide();
                 $('#error-message').hide();
-                $('.control-button').prop('disabled', true);
                 
                 $.ajax({
                     url: '/generate',
@@ -334,12 +357,9 @@
                     data: formData,
                     success: function(response) {
                         $('.loading').hide();
-                        bookContent = response.content.split(/(?<=\n\n)/);
-                        currentPage = 0;
-                        updatePageContent();
+                        $('.page-content').html(response.content);
                         $('#progress').text('Book generated! Word count: ' + response.word_count);
                         $('#download-pdf').show();
-                        $('.control-button').prop('disabled', false);
                         gsap.from('.book', {opacity: 0, y: 50, duration: 1, ease: 'power3.out'});
                     },
                     error: function(xhr, status, error) {
@@ -350,7 +370,7 @@
             });
 
             $('#download-pdf').click(function() {
-                var content = bookContent.join('');
+                var content = $('.page-content').html();
                 var title = $('#topic').val();
                 $('.loading').show();
                 $('#error-message').hide();
