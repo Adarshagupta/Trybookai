@@ -4,347 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Book Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #50c878;
-            --accent-color: #ff6b6b;
-            --background-color: #f7f9fc;
-            --text-color: #333;
-            --white: #ffffff;
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--background-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: 80px;
-        }
-
-        .floating-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style-type: none;
-        }
-
-        .nav-menu li {
-            margin: 0 15px;
-        }
-
-        .nav-menu a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-menu a:hover {
-            color: var(--primary-color);
-        }
-
-        .container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        .content-wrapper {
-            display: flex;
-            max-width: 1200px;
-            width: 100%;
-        }
-
-        .form-container {
-            width: 400px;
-            background-color: var(--white);
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            margin-right: 40px;
-        }
-
-        .book-container {
-            width: 595px;
-            height: 842px;
-            background-color: var(--white);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .book {
-            flex-grow: 1;
-            padding: 40px;
-            font-size: 16px;
-            line-height: 1.8;
-            color: var(--text-color);
-            overflow: hidden;
-        }
-
-        .page-content {
-            height: 100%;
-            overflow: hidden;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            font-size: 2.4em;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-color);
-            font-size: 1em;
-        }
-
-        input[type="text"], input[type="password"], input[type="number"], select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            font-weight: 500;
-        }
-
-        button:hover {
-            background-color: #3a7bc8;
-        }
-
-        #progress {
-            margin-top: 20px;
-            font-style: italic;
-            color: var(--secondary-color);
-            text-align: center;
-        }
-
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .loading-content {
-            text-align: center;
-            color: var(--primary-color);
-        }
-
-        .loading-spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            color: var(--accent-color);
-            background-color: rgba(255, 107, 107, 0.1);
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .control-button {
-            background-color: var(--secondary-color);
-            color: var(--white);
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .control-button:hover {
-            background-color: #45b168;
-        }
-
-        .control-button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-
-        #download-pdf {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--accent-color);
-            color: var(--white);
-            padding: 12px 24px;
-            border-radius: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        #download-pdf:hover {
-            background-color: #ff5252;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-        }
-
-        @media (max-width: 1200px) {
-            .content-wrapper {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .form-container, .book-container {
-                width: 100%;
-                max-width: 595px;
-                margin-right: 0;
-                margin-bottom: 30px;
-            }
-        }
-    </style>
+    </script>
 </head>
-<body>
-    <header class="floating-header">
-        <div class="header-content">
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
+<body class="font-sans text-gray-800 bg-gray-50 min-h-screen flex flex-col">
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-primary">AI Book Generator</a>
+                <div class="space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-primary">Home</a>
+                    <a href="#" class="text-gray-600 hover:text-primary">About</a>
+                    <a href="#" class="text-gray-600 hover:text-primary">Contact</a>
+                </div>
+            </div>
+        </nav>
     </header>
-    <div class="container">
-        <div class="content-wrapper">
-            <div class="form-container">
-                <h1>AI Book Generator</h1>
-                <form id="book-form">
-                    <div class="form-group">
-                        <label for="api_key">OpenAI API Key:</label>
-                        <input type="password" id="api_key" name="api_key" required>
+
+    <main class="flex-grow container mx-auto px-4 py-10">
+        <div class="flex flex-col lg:flex-row max-w-6xl mx-auto gap-10">
+            <div class="w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-sm">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Generate Your AI Book</h1>
+                <form id="book-form" class="space-y-6">
+                    <div>
+                        <label for="api_key" class="block mb-2 text-sm font-medium text-gray-700">OpenAI API Key</label>
+                        <input type="password" id="api_key" name="api_key" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
                     </div>
-                    <div class="form-group">
-                        <label for="model">Model:</label>
-                        <select id="model" name="model" required>
+                    <div>
+                        <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
+                        <select id="model" name="model" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
                             <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                            <option value="gpt-4o-mini">gpt-4o-mini</option>
-                            <option value="gpt-4o-mini-2024-07-18">gpt-4o-mini-2024-07-18</option>
+                            <option value="gpt-4o-mini">GPT-4o Mini</option>
+                            <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="topic">Book Topic:</label>
-                        <input type="text" id="topic" name="topic" required>
+                    <div>
+                        <label for="language" class="block mb-2 text-sm font-medium text-gray-700">Language</label>
+                        <select id="language" name="language" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
+                            <option value="english">English</option>
+                            <option value="hindi">Hindi(Experimental)</option>
+                            <option value="spanish">Spanish</option>
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <label for="word_count">Target Word Count:</label>
-                        <input type="number" id="word_count" name="word_count" value="10000" required>
+                    <div>
+                        <label for="topic" class="block mb-2 text-sm font-medium text-gray-700">Book Topic</label>
+                        <input type="text" id="topic" name="topic" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
                     </div>
-                    <button type="submit">Generate Book</button>
+                    <div>
+                        <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
+                        <input type="number" id="word_count" name="word_count" value="10000" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-blue-600 transition font-medium">Generate Book</button>
                 </form>
-                <div id="progress"></div>
-                <div id="error-message" class="error-message" style="display: none;"></div>
+                <div id="progress" class="mt-4 text-secondary text-center"></div>
+                <div id="error-message" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md text-center font-medium hidden"></div>
             </div>
-            <div class="book-container">
-                <div class="book">
+            <div class="w-full lg:w-1/2 bg-white shadow-sm rounded-lg overflow-hidden">
+                <div class="h-[600px] p-8 overflow-auto">
                     <div class="page-content"></div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="loading" style="display: none;">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
+    <div class="loading fixed inset-0 bg-white bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50 hidden">
+        <div class="text-center text-primary">
+            <div class="inline-block w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
             <p>Generating your book...</p>
         </div>
     </div>
-    
-    <button id="download-pdf" style="display: none;">Download as PDF</button>
 
+    <div id="ad-wall" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full relative">
+            <h2 class="text-2xl font-bold mb-4">Advertisement</h2>
+            <p class="mb-4">This is an advertisement. You can close this ad in <span id="countdown">30</span> seconds.</p>
+            <p id="ad-reason" class="mb-4 text-sm text-gray-600"></p>
+            <div id="ad-content" class="mb-4">
+                <!-- Add your advertisement content here -->
+                <img src="https://via.placeholder.com/800x400" alt="Advertisement" class="w-full h-auto">
+            </div>
+            <button id="close-ad" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <button id="download-pdf" class="fixed bottom-5 right-5 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
+        Download Your Book
+    </button>
+
+    <footer class="bg-white border-t">
+        <div class="container mx-auto px-4 py-6">
+            <p class="text-center text-gray-600">© 2024 AI Book Generator. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-       $(document).ready(function() {
+        $(document).ready(function() {
+            // Load saved API key
+            var savedApiKey = localStorage.getItem('openai_api_key');
+            if (savedApiKey) {
+                $('#api_key').val(savedApiKey);
+            }
+
             $('#book-form').submit(function(e) {
                 e.preventDefault();
-                var formData = $(this).serialize();
+                // Save API key
+                localStorage.setItem('openai_api_key', $('#api_key').val());
+                showAdWall('generate');
+            });
+
+            function showAdWall(action) {
+                $('#ad-wall').removeClass('hidden');
+                var countdown = 5;
+                var adReason = "";
+
+                if ($('#model').val() === 'gpt-3.5-turbo') {
+                    countdown = 30;
+                    adReason = "You've selected GPT-3.5 Turbo, which requires a longer processing time.";
+                }
+
+                if (parseInt($('#word_count').val()) > 1000) {
+                    countdown = 50;
+                    adReason = "You've requested over 1000 words, which requires more processing time.";
+                }
+
+                $('#countdown').text(countdown);
+                $('#ad-reason').text(adReason);
+
+                var countdownInterval = setInterval(function() {
+                    countdown--;
+                    $('#countdown').text(countdown);
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        $('#close-ad').removeClass('hidden');
+                    }
+                }, 1000);
+
+                $('#close-ad').off('click').on('click', function() {
+                    $('#ad-wall').addClass('hidden');
+                    if (action === 'generate') {
+                        generateBook();
+                    } else if (action === 'download') {
+                        downloadPDF();
+                    }
+                });
+            }
+
+            function generateBook() {
+                var formData = $('#book-form').serialize();
                 $('#progress').text('');
                 $('.page-content').empty();
                 $('.loading').show();
@@ -360,18 +186,22 @@
                         $('.page-content').html(response.content);
                         $('#progress').text('Book generated! Word count: ' + response.word_count);
                         $('#download-pdf').show();
-                        gsap.from('.book', {opacity: 0, y: 50, duration: 1, ease: 'power3.out'});
                     },
                     error: function(xhr, status, error) {
                         $('.loading').hide();
                         $('#error-message').text('An error occurred while generating the book: ' + error).show();
                     }
                 });
-            });
+            }
 
             $('#download-pdf').click(function() {
+                showAdWall('download');
+            });
+
+            function downloadPDF() {
                 var content = $('.page-content').html();
                 var title = $('#topic').val();
+                var language = $('#language').val();
                 $('.loading').show();
                 $('#error-message').hide();
                 
@@ -379,7 +209,7 @@
                     url: '/download-pdf',
                     method: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({content: content, title: title}),
+                    data: JSON.stringify({content: content, title: title, language: language}),
                     xhrFields: {
                         responseType: 'blob'
                     },
@@ -399,7 +229,7 @@
                         $('#error-message').text(errorMessage).show();
                     }
                 });
-            });
+            }
         });
     </script>
 </body>

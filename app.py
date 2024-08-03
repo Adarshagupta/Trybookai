@@ -10,15 +10,17 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 import io
 import asyncio
 import aiohttp
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 app = Flask(__name__)
 
-async def generate_chunk(api_key, model, topic, current_word_count, is_new_chapter=False):
+async def generate_chunk(api_key, model, topic, current_word_count, language, is_new_chapter=False):
     openai.api_key = api_key
     if is_new_chapter:
-        prompt = f"Write the beginning of a new chapter for a book about {topic}. This is around word {current_word_count} of the book. Start with a chapter title."
+        prompt = f"Write the beginning of a new chapter for a book about {topic} in {language}. This is around word {current_word_count} of the book. Start with a chapter title."
     else:
-        prompt = f"Continue writing a book about {topic}. This is around word {current_word_count} of the book. Make sure the narrative flows smoothly from the previous section."
+        prompt = f"Continue writing a book about {topic} in {language}. This is around word {current_word_count} of the book. Make sure the narrative flows smoothly from the previous section."
     
     try:
         async with aiohttp.ClientSession() as session:
@@ -28,7 +30,7 @@ async def generate_chunk(api_key, model, topic, current_word_count, is_new_chapt
                 json={
                     "model": model,
                     "messages": [
-                        {"role": "system", "content": "You are an author writing a book. Format your response as a part of a book chapter."},
+                        {"role": "system", "content": f"You are an author writing a book in {language}. Format your response as a part of a book chapter."},
                         {"role": "user", "content": prompt}
                     ],
                     "max_tokens": 500
@@ -39,20 +41,29 @@ async def generate_chunk(api_key, model, topic, current_word_count, is_new_chapt
     except Exception as e:
         print(f"An error occurred: {e}")
         await asyncio.sleep(60)
-        return await generate_chunk(api_key, model, topic, current_word_count, is_new_chapter)
+        return await generate_chunk(api_key, model, topic, current_word_count, language, is_new_chapter)
 
-def create_pdf(content, title):
+def create_pdf(content, title, language):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
                             rightMargin=72, leftMargin=72,
                             topMargin=72, bottomMargin=18)
 
     styles = getSampleStyleSheet()
+    
+    # Use built-in fonts instead of external fonts
+    if language == 'hindi':
+        font = 'Helvetica'  # Fallback to a built-in font for non-Latin scripts
+    else:
+        font = 'Helvetica'
+    
     styles.add(ParagraphStyle(name='Chapter',
+                              fontName=font,
                               fontSize=18,
                               spaceAfter=12,
                               alignment=TA_CENTER))
     styles.add(ParagraphStyle(name='Content',
+                              fontName=font,
                               fontSize=12,
                               spaceAfter=12,
                               alignment=TA_JUSTIFY))
@@ -85,6 +96,7 @@ async def generate_book():
     api_key = request.form['api_key']
     model = request.form['model']
     topic = request.form['topic']
+    language = request.form['language']
     target_word_count = int(request.form['word_count'])
     current_word_count = 0
     book_content = []
@@ -96,9 +108,9 @@ async def generate_book():
         
         if is_new_chapter:
             chapter_count += 1
-            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count, is_new_chapter=True))
+            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count, language, is_new_chapter=True))
         else:
-            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count))
+            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count, language))
         
         tasks.append(task)
         current_word_count += 500  # Approximate word count per chunk
@@ -125,7 +137,8 @@ def download_pdf():
     try:
         content = request.json['content']
         title = request.json['title']
-        pdf_buffer = create_pdf(content, title)
+        language = request.json['language']
+        pdf_buffer = create_pdf(content, title, language)
         
         return send_file(pdf_buffer, download_name=f"{title}.pdf", as_attachment=True, mimetype='application/pdf')
     except Exception as e:
