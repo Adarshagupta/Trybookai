@@ -697,6 +697,24 @@ class="bg-zinc-50 text-center text-surface/75 dark:bg-neutral-700 dark:text-whit
                 }
             });
         });
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.querySelector('button[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const dismissButton = document.querySelector('header button[type="button"]');
+            const banner = document.querySelector('header > div');
+
+            // Toggle mobile menu visibility
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Hide banner on dismiss button click
+            dismissButton.addEventListener('click', () => {
+                banner.classList.add('hidden');
+            });
+        });
     </script>
     </script>
 </body>
