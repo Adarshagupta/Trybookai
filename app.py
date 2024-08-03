@@ -1,6 +1,6 @@
 import time
 import traceback
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, Response
 import openai
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -10,10 +10,11 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 import io
 import asyncio
 import aiohttp
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+from queue import Queue
 
 app = Flask(__name__)
+
+progress_queue = Queue()
 
 async def generate_chunk(api_key, model, topic, current_word_count, language, is_new_chapter=False):
     openai.api_key = api_key
@@ -51,11 +52,7 @@ def create_pdf(content, title, language):
 
     styles = getSampleStyleSheet()
     
-    # Use built-in fonts instead of external fonts
-    if language == 'hindi':
-        font = 'Helvetica'  # Fallback to a built-in font for non-Latin scripts
-    else:
-        font = 'Helvetica'
+    font = 'Helvetica'
     
     styles.add(ParagraphStyle(name='Chapter',
                               fontName=font,
@@ -70,11 +67,9 @@ def create_pdf(content, title, language):
 
     story = []
 
-    # Add title
     story.append(Paragraph(title, styles['Title']))
     story.append(Spacer(1, 24))
 
-    # Add content
     lines = content.split('\n')
     for line in lines:
         if line.strip().startswith("Chapter"):
@@ -117,10 +112,10 @@ async def generate_book():
         
         if len(tasks) >= 5 or current_word_count >= target_word_count:
             chunks = await asyncio.gather(*tasks)
-            for i, chunk in enumerate(chunks):
-                if i == 0 and is_new_chapter:
-                    chunk = f"\n\nChapter {chapter_count}\n\n" + chunk
+            for chunk in chunks:
                 book_content.append(chunk)
+                actual_word_count = len(" ".join(book_content).split())
+                progress_queue.put(actual_word_count)
             tasks = []
             await asyncio.sleep(1)  # Small delay to avoid rate limits
 
@@ -131,6 +126,18 @@ async def generate_book():
         'content': formatted_book,
         'word_count': actual_word_count
     })
+
+@app.route('/progress')
+def progress():
+    def generate():
+        while True:
+            if not progress_queue.empty():
+                yield f"data: {progress_queue.get()}\n\n"
+            else:
+                yield "data: keep-alive\n\n"
+            time.sleep(1)
+    
+    return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/download-pdf', methods=['POST'])
 def download_pdf():
