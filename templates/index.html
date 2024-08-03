@@ -196,9 +196,11 @@
         </div>
     </div>
 
-    <button id="download-pdf" class="fixed bottom-5 right-5 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
-        Download Your Book
-    </button>
+    <button id="download-pdf" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
+      Download Your Book
+  </button>
+  
+  
     <div class="bg-white py-24 sm:py-32">
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
         <div class="mx-auto max-w-2xl lg:mx-0">
@@ -678,6 +680,40 @@ class="bg-zinc-50 text-center text-surface/75 dark:bg-neutral-700 dark:text-whit
                     }
                 });
             }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.querySelector('button[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const dismissButton = document.querySelector('header button[type="button"]');
+            const banner = document.querySelector('header > div');
+
+            // Toggle mobile menu visibility
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Hide banner on dismiss button click
+            dismissButton.addEventListener('click', () => {
+                banner.classList.add('hidden');
+            });
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.querySelector('button[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuOpenIcon = mobileMenuButton.querySelector('svg.block');
+            const menuCloseIcon = mobileMenuButton.querySelector('svg.hidden');
+
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+                
+                // Toggle icons
+                menuOpenIcon.classList.toggle('hidden', !isExpanded);
+                menuCloseIcon.classList.toggle('hidden', isExpanded);
+            });
         });
     </script>
 </body>
