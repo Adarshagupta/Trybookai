@@ -71,37 +71,69 @@ The application uses a queue-based system for managing progress updates and empl
 
 
 1. Clone the repository:
-   ```bash
+   ```
    git clone https://github.com/yourusername/BookAI.git
    cd BookAI
    ```
 
 
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+2. Install the required dependencies:
    ```
-
-
-3. Install the required dependencies:
-   ```bash
    pip install -r requirements.txt
    ```
 
 
-4. Install the async Flask extension:
-   ```bash
+3. Install the async Flask extension:
+   ```
    pip install 'flask[async]'
    ```
 
 
-5. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Edit the `.env` file and add your OpenAI API key.
+## Usage
 
+
+1. Start the Flask application:
+   ```
+   python app.py
+   ```
+
+
+2. Open a web browser and navigate to `http://localhost:5151` (or the appropriate port if you've changed it).
+
+
+3. Enter the required information in the web interface:
+   - OpenAI API Key
+   - Model (e.g., "gpt-3.5-turbo")
+   - Topic
+   - Target word count
+   - Language
+
+
+4. Click "Generate Book" to start the book generation process.
+
+
+5. Monitor the progress in real-time.
+
+
+6. Once the book is generated, you can view it in the browser or download it as a PDF.
+
+
+## Docker Deployment
+
+
+To deploy BookAI using Docker:
+
+
+1. Build the Docker image:
+   ```
+   docker build -t bookai .
+   ```
+
+
+2. Run the Docker container:
+   ```
+   docker run -p 5000:5000 bookai
+   ```
 
 ## Configuration
 
