@@ -138,7 +138,7 @@ async def generate_book():
 
 @app.route('/progress')
 def progress():
-    def generate():
+    def generate(): 
         while True:
             if not progress_queue.empty():
                 yield f"data: {progress_queue.get()}\n\n"
