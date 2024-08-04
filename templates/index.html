@@ -109,82 +109,78 @@
 
       
     </header>
-
-    <main class="flex-grow container mx-auto px-4 py-10">
-        <div class="flex flex-col lg:flex-row max-w-6xl mx-auto gap-10">
-            <div class="w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-sm">
-                <h1 class="text-3xl font-bold text-gray-800 mb-6">Generate Your AI Book</h1>
-                <form id="book-form" class="space-y-6">
-                    <div>
-                        <label for="api_key" class="block mb-2 text-sm font-medium text-gray-700">OpenAI API Key</label>
-                        <input type="password" id="api_key" name="api_key" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
-                    </div>
-                    <div>
-                        <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
-                        <select id="model" name="model" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
-                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                            <option value="gpt-4o-mini">GPT-4o Mini</option>
-                            <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="language" class="block mb-2 text-sm font-medium text-gray-700">Language</label>
-                        <select id="language" name="language" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
-                            <option value="english">English</option>
-                            <option value="hindi">Hindi(Experimental)</option>
-                            <option value="spanish">Spanish</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="topic" class="block mb-2 text-sm font-medium text-gray-700">Book Topic</label>
-                        <input type="text" id="topic" name="topic" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
-                    </div>
-                    <div>
-                        <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
-                        <input type="number" id="word_count" name="word_count" value="10000" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
-                    </div>
-                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-blue-600 transition font-medium">Generate Book</button>
-                </form>
-                <div id="progress" class="mt-4 text-secondary text-center"></div>
-                <div id="error-message" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md text-center font-medium hidden"></div>
-            </div>
-            <div class="w-full lg:w-1/2 bg-white shadow-sm rounded-lg overflow-hidden">
-                <div class="h-[600px] p-8 overflow-auto">
-                    <div class="page-content"></div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div class="loading fixed inset-0 bg-white bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50 hidden">
-        <div class="text-center text-primary">
-            <div class="inline-block w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p>Generating your book...</p>
-            <p>Based on words ita may take long time</p>
-        </div>
-    </div>
-
-    <div id="ad-wall" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full relative">
-            <h2 class="text-2xl font-bold mb-4">Advertisement</h2>
-            <p class="mb-4">This is an advertisement. You can close this ad in <span id="countdown">30</span> seconds.</p>
-            <p id="ad-reason" class="mb-4 text-sm text-gray-600"></p>
-            <div id="ad-content" class="mb-4">
-                <!-- Add your advertisement content here -->
-                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Y-JKELyGPdo?autoplay=1&mute=1" title="Deadpool vs Francis - Final Fight Scene - Deadpool (2016) Movie Clip HD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-            </div>
-            <button id="close-ad" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-    </div>
-
-    <button id="download-pdf" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
-      Download Your Book
-  </button>
+    <main class="flex h-screen bg-gradient-to-br from-indigo-600 to-purple-700 font-sans">
+      <div class="w-80 bg-white shadow-2xl p-8 flex flex-col rounded-l-3xl transition-all duration-300 hover:shadow-3xl">
+          <h1 class="text-4xl font-bold text-gray-800 mb-10 text-center">AI Book <span class="text-indigo-600">Generator</span></h1>
+          <form id="book-form" class="space-y-6 flex-grow">
+              <div class="transition-all duration-300 hover:transform hover:scale-105">
+                  <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
+                  <select id="model" name="model" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
+                      <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                      <option value="gpt-4o-mini">GPT-4o Mini</option>
+                      <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
+                  </select>
+              </div>
+              <div class="transition-all duration-300 hover:transform hover:scale-105">
+                  <label for="language" class="block mb-2 text-sm font-medium text-gray-700">Language</label>
+                  <select id="language" name="language" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
+                      <option value="english">English</option>
+                      <option value="hindi">Hindi (Experimental)</option>
+                      <option value="spanish">Spanish</option>
+                  </select>
+              </div>
+              <div class="transition-all duration-300 hover:transform hover:scale-105">
+                  <label for="topic" class="block mb-2 text-sm font-medium text-gray-700">Book Topic</label>
+                  <input type="text" id="topic" name="topic" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300" placeholder="Enter your book topic...">
+              </div>
+              <div class="transition-all duration-300 hover:transform hover:scale-105">
+                  <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
+                  <input type="number" id="word_count" name="word_count" value="10000" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
+              </div>
+              <button type="submit" id="generate-book" class="w-full bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
+                  Generate Book
+              </button>
+          </form>
+          <div id="progress" class="mt-6 text-gray-600 text-center text-sm"></div>
+          <div id="error-message" class="mt-6 p-4 bg-red-100 text-red-700 rounded-xl text-center font-medium text-sm hidden"></div>
+      </div>
+      <div class="flex-1 flex flex-col bg-white rounded-r-3xl shadow-2xl transition-all duration-300 hover:shadow-3xl">
+          <div class="flex-1 overflow-auto p-8">
+              <div class="max-w-3xl mx-auto">
+                  <div class="page-content space-y-6"></div>
+              </div>
+          </div>
+      </div>
+  </main>
+  
+  <div class="loading fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 hidden transition-opacity duration-300">
+      <div class="text-center text-white bg-gray-800 p-8 rounded-lg shadow-xl transform transition-all duration-300 hover:scale-105">
+          <div class="inline-block w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p class="text-xl font-semibold">Generating your book...</p>
+          <p class="text-sm mt-2 text-gray-300">This may take a while based on the word count</p>
+      </div>
+  </div>
+  
+  <div id="ad-wall" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden transition-opacity duration-300">
+      <div class="bg-white p-8 rounded-lg shadow-2xl max-w-2xl w-full relative transform transition-all duration-300 hover:scale-105">
+          <h2 class="text-3xl font-bold mb-4 text-gray-800">Advertisement</h2>
+          <p class="mb-4 text-gray-600">This is an advertisement. You can close this ad in <span id="countdown" class="font-semibold text-indigo-600">30</span> seconds.</p>
+          <p id="ad-reason" class="mb-4 text-sm text-gray-500"></p>
+          <div id="ad-content" class="mb-4 rounded-lg overflow-hidden shadow-lg">
+              <iframe width="100%" height="315" src="https://www.youtube.com/embed/Y-JKELyGPdo?autoplay=1&mute=1" title="Deadpool vs Francis - Final Fight Scene - Deadpool (2016) Movie Clip HD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <button id="close-ad" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 hidden transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+      </div>
+  </div>
+  
+  <button id="download-pdf" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
+    Download Your Book
+</button>
+    
   <div class="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
     <div class="absolute inset-0 -z-10 overflow-hidden">
       <svg class="absolute left-[max(50%,25rem)] top-0 h-[64rem] w-[128rem] -translate-x-1/2 stroke-gray-200 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
@@ -444,168 +440,239 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Load saved API key
-            var savedApiKey = localStorage.getItem('openai_api_key');
-            if (savedApiKey) {
-                $('#api_key').val(savedApiKey);
+       $(document).ready(function() {
+    // Initialize EventSource for progress updates
+    var eventSource;
+
+    $('#book-form').submit(function(e) {
+        e.preventDefault();
+        showAdWall('generate');
+    });
+
+    function showAdWall(action) {
+        $('#ad-wall').removeClass('hidden');
+        var countdown = 5;
+        var adReason = "";
+
+        if ($('#model').val() === 'gpt-3.5-turbo') {
+            countdown = 30;
+            adReason = "You've selected GPT-3.5 Turbo, which requires a longer processing time.";
+        }
+
+        if (parseInt($('#word_count').val()) > 1000) {
+            countdown = 50;
+            adReason = "You've requested over 1000 words, which requires more processing time.";
+        }
+
+        $('#countdown').text(countdown);
+        $('#ad-reason').text(adReason);
+
+        var countdownInterval = setInterval(function() {
+            countdown--;
+            $('#countdown').text(countdown);
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                $('#close-ad').removeClass('hidden');
             }
+        }, 1000);
 
-            $('#book-form').submit(function(e) {
-                e.preventDefault();
-                // Save API key
-                localStorage.setItem('openai_api_key', $('#api_key').val());
-                showAdWall('generate');
-            });
-
-            function showAdWall(action) {
-                $('#ad-wall').removeClass('hidden');
-                var countdown = 5;
-                var adReason = "";
-
-                if ($('#model').val() === 'gpt-3.5-turbo') {
-                    countdown = 30;
-                    adReason = "You've selected GPT-3.5 Turbo, which requires a longer processing time.";
-                }
-
-                if (parseInt($('#word_count').val()) > 1000) {
-                    countdown = 50;
-                    adReason = "You've requested over 1000 words, which requires more processing time.";
-                }
-
-                $('#countdown').text(countdown);
-                $('#ad-reason').text(adReason);
-
-                var countdownInterval = setInterval(function() {
-                    countdown--;
-                    $('#countdown').text(countdown);
-                    if (countdown <= 0) {
-                        clearInterval(countdownInterval);
-                        $('#close-ad').removeClass('hidden');
-                    }
-                }, 1000);
-
-                $('#close-ad').off('click').on('click', function() {
-                    $('#ad-wall').addClass('hidden');
-                    if (action === 'generate') {
-                        generateBook();
-                    } else if (action === 'download') {
-                        downloadPDF();
-                    }
-                });
-            }
-
-            function generateBook() {
-                var formData = $('#book-form').serialize();
-                $('#progress').text('');
-                $('.page-content').empty();
-                $('.loading').show();
-                $('#download-pdf').hide();
-                $('#error-message').hide();
-                
-                $.ajax({
-                    url: '/generate',
-                    method: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        $('.loading').hide();
-                        $('.page-content').html(response.content);
-                        $('#progress').text('Book generated! Word count: ' + response.word_count);
-                        $('#download-pdf').show();
-                    },
-                    error: function(xhr, status, error) {
-                        $('.loading').hide();
-                        $('#error-message').text('An error occurred while generating the book: ' + error).show();
-                    }
-                });
-            }
-
-            $('#download-pdf').click(function() {
-                showAdWall('download');
-            });
-
-            function downloadPDF() {
-                var content = $('.page-content').html();
-                var title = $('#topic').val();
-                var language = $('#language').val();
-                $('.loading').show();
-                $('#error-message').hide();
-                
-                $.ajax({
-                    url: '/download-pdf',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({content: content, title: title, language: language}),
-                    xhrFields: {
-                        responseType: 'blob'
-                    },
-                    success: function(blob) {
-                        $('.loading').hide();
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = title + ".pdf";
-                        link.click();
-                    },
-                    error: function(xhr, status, error) {
-                        $('.loading').hide();
-                        var errorMessage = 'An error occurred while generating the PDF.';
-                        if (xhr.responseJSON && xhr.responseJSON.error) {
-                            errorMessage += ' Details: ' + xhr.responseJSON.error;
-                        }
-                        $('#error-message').text(errorMessage).show();
-                    }
-                });
+        $('#close-ad').off('click').on('click', function() {
+            $('#ad-wall').addClass('hidden');
+            if (action === 'generate') {
+                generateBook();
+            } else if (action === 'download') {
+                downloadPDF();
             }
         });
-        document.addEventListener('DOMContentLoaded', function() {
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userMenu = document.getElementById('user-menu');
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
+    }
 
-            userMenuButton.addEventListener('click', function() {
-                userMenu.classList.toggle('hidden');
-            });
-
-            mobileMenuButton.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
-                mobileMenuButton.setAttribute('aria-expanded', mobileMenu.classList.contains('hidden') ? 'false' : 'true');
-                mobileMenuButton.querySelector('svg:nth-child(1)').classList.toggle('hidden');
-                mobileMenuButton.querySelector('svg:nth-child(2)').classList.toggle('hidden');
-            });
-
-            // Close menus when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                    userMenu.classList.add('hidden');
-                }
-                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenuButton.setAttribute('aria-expanded', 'false');
-                    mobileMenuButton.querySelector('svg:nth-child(1)').classList.remove('hidden');
-                    mobileMenuButton.querySelector('svg:nth-child(2)').classList.add('hidden');
-                }
-            });
-        });
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.querySelector('button[aria-controls="mobile-menu"]');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const dismissButton = document.querySelector('header button[type="button"]');
-            const banner = document.querySelector('header > div');
-
-            // Toggle mobile menu visibility
-            mobileMenuButton.addEventListener('click', () => {
-                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            // Hide banner on dismiss button click
-            dismissButton.addEventListener('click', () => {
-                banner.classList.add('hidden');
-            });
-        });
+    function generateBook() {
+        var formData = $('#book-form').serialize();
+        $('#progress').text('');
+        $('.page-content').empty();
+        $('.loading').show();
+        $('#download-pdf').hide();
+        $('#error-message').hide();
         
+        // Close existing EventSource if it exists
+        if (eventSource) {
+            eventSource.close();
+        }
+
+        // Create new EventSource for progress updates
+        eventSource = new EventSource('/progress');
+        eventSource.onmessage = function(event) {
+            if (event.data !== 'keep-alive') {
+                $('#progress').text('Words generated: ' + event.data);
+            }
+        };
+        
+        $.ajax({
+            url: '/generate',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                $('.loading').hide();
+                $('.page-content').html(response.content);
+                $('#progress').text('Book generated! Word count: ' + response.word_count);
+                $('#download-pdf').show();
+                
+                // Close EventSource after successful generation
+                eventSource.close();
+            },
+            error: function(xhr, status, error) {
+                $('.loading').hide();
+                $('#error-message').text('An error occurred while generating the book: ' + error).show();
+                
+                // Close EventSource on error
+                eventSource.close();
+            }
+        });
+    }
+
+    $('#download-pdf').click(function() {
+        showAdWall('download');
+    });
+
+    function downloadPDF() {
+        var content = $('.page-content').html();
+        var title = $('#topic').val();
+        var language = $('#language').val();
+        $('.loading').show();
+        $('#error-message').hide();
+        
+        $.ajax({
+            url: '/download-pdf',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({content: content, title: title, language: language}),
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function(blob) {
+                $('.loading').hide();
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = title + ".pdf";
+                link.click();
+            },
+            error: function(xhr, status, error) {
+                $('.loading').hide();
+                var errorMessage = 'An error occurred while generating the PDF.';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage += ' Details: ' + xhr.responseJSON.error;
+                }
+                $('#error-message').text(errorMessage).show();
+            }
+        });
+    }
+
+    // Handle mobile menu toggle
+    const userMenuButton = document.getElementById('user-menu-button');
+    const userMenu = document.getElementById('user-menu');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    userMenuButton.addEventListener('click', function() {
+        userMenu.classList.toggle('hidden');
+    });
+
+    mobileMenuButton.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', mobileMenu.classList.contains('hidden') ? 'false' : 'true');
+        mobileMenuButton.querySelector('svg:nth-child(1)').classList.toggle('hidden');
+        mobileMenuButton.querySelector('svg:nth-child(2)').classList.toggle('hidden');
+    });
+
+    // Close menus when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+            userMenu.classList.add('hidden');
+        }
+        if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+            mobileMenu.classList.add('hidden');
+            mobileMenuButton.setAttribute('aria-expanded', 'false');
+            mobileMenuButton.querySelector('svg:nth-child(1)').classList.remove('hidden');
+            mobileMenuButton.querySelector('svg:nth-child(2)').classList.add('hidden');
+        }
+    });
+
+    // Handle header banner dismiss
+    const dismissButton = document.querySelector('header button[type="button"]');
+    const banner = document.querySelector('header > div');
+
+    if (dismissButton && banner) {
+        dismissButton.addEventListener('click', () => {
+            banner.classList.add('hidden');
+        });
+    }
+});
+document.getElementById('model').addEventListener('change', function(e) {
+    const newModels = ['gpt-4o-mini', 'gpt-4o-mini-2024-07-18'];
+    if (newModels.includes(e.target.value)) {
+        const notification = document.createElement('div');
+        notification.textContent = 'New model selected!';
+        notification.className = 'fixed top-4 right-4 bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg transform transition-all duration-300 translate-y-[-150%]';
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.style.transform = 'translateY(0)';
+        }, 100);
+        setTimeout(() => {
+            notification.style.transform = 'translateY(-150%)';
+        }, 3000);
+        setTimeout(() => {
+            notification.remove();
+        }, 3300);
+    }
+});
+
+document.getElementById('book-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const topic = document.getElementById('topic').value;
+    const model = document.getElementById('model').value;
+    const language = document.getElementById('language').value;
+    const wordCount = document.getElementById('word_count').value;
+
+    // Show loading spinner
+    document.querySelector('.loading').classList.remove('hidden');
+
+    // Send request to Flask backend
+    fetch('/generate_book', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            topic: topic,
+            model: model,
+            language: language,
+            word_count: wordCount
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Hide loading spinner
+        document.querySelector('.loading').classList.add('hidden');
+
+        // Display the generated book content
+        const pageContent = document.querySelector('.page-content');
+        pageContent.innerHTML = data.content;
+
+        // Show download button
+        document.getElementById('download-pdf').classList.remove('hidden');
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // Hide loading spinner
+        document.querySelector('.loading').classList.add('hidden');
+        // Show error message
+        const errorMessage = document.getElementById('error-message');
+        errorMessage.textContent = 'An error occurred while generating the book. Please try again.';
+        errorMessage.classList.remove('hidden');
+    });
+});
+
     </script>
     </script>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>

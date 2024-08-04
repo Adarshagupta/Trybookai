@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import time
 import traceback
 from flask import Flask, render_template, request, jsonify, send_file, Response
@@ -12,12 +14,17 @@ import asyncio
 import aiohttp
 from queue import Queue
 
+load_dotenv()  # Load environment variables from .env file
+
 app = Flask(__name__)
 
 progress_queue = Queue()
 
-async def generate_chunk(api_key, model, topic, current_word_count, language, is_new_chapter=False):
-    openai.api_key = api_key
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
+
+async def generate_chunk(model, topic, current_word_count, language, is_new_chapter=False):
     if is_new_chapter:
         prompt = f"Write the beginning of a new chapter for a book about {topic} in {language}. This is around word {current_word_count} of the book. Start with a chapter title."
     else:
@@ -27,7 +34,7 @@ async def generate_chunk(api_key, model, topic, current_word_count, language, is
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://api.openai.com/v1/chat/completions",
-                headers={"Authorization": f"Bearer {api_key}"},
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
                 json={
                     "model": model,
                     "messages": [
@@ -38,11 +45,13 @@ async def generate_chunk(api_key, model, topic, current_word_count, language, is
                 }
             ) as response:
                 result = await response.json()
+                if 'choices' not in result or len(result['choices']) == 0:
+                    raise ValueError(f"Unexpected API response: {result}")
                 return result['choices'][0]['message']['content'].strip()
     except Exception as e:
         print(f"An error occurred: {e}")
         await asyncio.sleep(60)
-        return await generate_chunk(api_key, model, topic, current_word_count, language, is_new_chapter)
+        return await generate_chunk(model, topic, current_word_count, language, is_new_chapter)
 
 def create_pdf(content, title, language):
     buffer = io.BytesIO()
@@ -88,7 +97,6 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 async def generate_book():
-    api_key = request.form['api_key']
     model = request.form['model']
     topic = request.form['topic']
     language = request.form['language']
@@ -103,9 +111,9 @@ async def generate_book():
         
         if is_new_chapter:
             chapter_count += 1
-            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count, language, is_new_chapter=True))
+            task = asyncio.create_task(generate_chunk(model, topic, current_word_count, language, is_new_chapter=True))
         else:
-            task = asyncio.create_task(generate_chunk(api_key, model, topic, current_word_count, language))
+            task = asyncio.create_task(generate_chunk(model, topic, current_word_count, language))
         
         tasks.append(task)
         current_word_count += 500  # Approximate word count per chunk
@@ -126,6 +134,7 @@ async def generate_book():
         'content': formatted_book,
         'word_count': actual_word_count
     })
+
 
 @app.route('/progress')
 def progress():
