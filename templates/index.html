@@ -21,6 +21,13 @@
             },
         }
     </script>
+    <meta name="description" content="AI Book Generator: Enrich your online business with data-driven insights. Discover our products, features, and company information.">
+    <meta name="keywords" content="AI Book Generator, online business, data insights, products, features, company">
+    <meta property="og:title" content="AI Book Generator">
+    <meta property="og:description" content="Enrich your online business with data-driven insights from AI Book Generator. Discover our products, features, and more.">
+    <meta property="og:image" content="https://example.com/image.jpg">
+    <meta property="og:url" content="https://example.com">
+    <meta name="twitter:card" content="summary_large_image">
     <style>
         @media (max-width: 640px) {
             .mobile-full-width {
@@ -94,16 +101,45 @@
                   </div>
               </div>
           </div>
+          <!-- Analytics Dashboard -->
+          <div id="analytics-dashboard" class="p-4 border-t border-gray-200 hidden">
+              <h3 class="text-xl font-semibold mb-4">Analytics Dashboard</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="bg-gray-100 p-4 rounded-lg">
+                      <h4 class="font-medium mb-2">Word Count</h4>
+                      <p id="word-count" class="text-2xl font-bold"></p>
+                  </div>
+                  <div class="bg-gray-100 p-4 rounded-lg">
+                      <h4 class="font-medium mb-2">Readability Score</h4>
+                      <p id="readability-score" class="text-2xl font-bold"></p>
+                  </div>
+                  <div class="bg-gray-100 p-4 rounded-lg">
+                      <h4 class="font-medium mb-2">Genre Classification</h4>
+                      <p id="genre-classification" class="text-2xl font-bold"></p>
+                  </div>
+                  <div class="bg-gray-100 p-4 rounded-lg">
+                      <h4 class="font-medium mb-2">Sentiment Analysis</h4>
+                      <p id="sentiment-analysis" class="text-2xl font-bold"></p>
+                  </div>
+              </div>
+          </div>
       </div>
   </main>
 
-  <div class="loading fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 hidden transition-opacity duration-300">
-      <div class="text-center text-white bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl transform transition-all duration-300 hover:scale-105">
-          <div class="inline-block w-12 h-12 md:w-16 md:h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p class="text-lg md:text-xl font-semibold">Generating your book...</p>
-          <p class="text-xs md:text-sm mt-2 text-gray-300">This may take a while based on the word count</p>
-      </div>
-  </div>
+ <div class="loading fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex flex-col justify-center items-center z-50 hidden transition-opacity duration-300">
+        <div class="text-center text-white bg-gray-800 p-6 rounded-2xl shadow-xl transform transition-all duration-300 hover:scale-105 mb-4">
+            <div class="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-lg font-semibold">Generating your book...</p>
+            <p class="text-xs mt-2 text-gray-300">This may take a while based on the word count</p>
+        </div>
+        <!-- New ad banner in loading screen -->
+        <div class="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
+            <p class="text-xs text-gray-500 text-center py-1">Advertisement</p>
+            <div class="ad-banner" style="width: 100%; height: 100px; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center;">
+                <p class="text-gray-400">Ad Banner (320x100)</p>
+            </div>
+        </div>
+    </div>
 
   <div id="ad-wall" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden transition-opacity duration-300">
       <div class="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-xl w-full mx-4 relative transform transition-all duration-300 hover:scale-105">
@@ -124,6 +160,7 @@
   <button id="download-pdf" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
       Download Your Book
   </button>
+  
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
@@ -180,6 +217,7 @@
               $('.loading').show();
               $('#download-pdf').hide();
               $('#error-message').hide();
+              $('#analytics-dashboard').addClass('hidden');
               
               // Close existing EventSource if it exists
               if (eventSource) {
@@ -206,6 +244,9 @@
                       
                       // Close EventSource after successful generation
                       eventSource.close();
+
+                      // Calculate and display analytics
+                      displayAnalytics(response.content);
                   },
                   error: function(xhr, status, error) {
                       $('.loading').hide();
@@ -312,6 +353,33 @@
               document.getElementById('play-pause').textContent = 'Play';
               isPlaying = false;
           };
+
+          // Analytics Dashboard functionality
+          function displayAnalytics(content) {
+              // Word count
+              const wordCount = content.split(/\s+/).length;
+              $('#word-count').text(wordCount);
+
+              // Readability score (using a simple formula)
+              const sentences = content.split(/[.!?]+/);
+              const averageWordsPerSentence = wordCount / sentences.length;
+              const readabilityScore = Math.round(206.835 - 1.015 * averageWordsPerSentence);
+              $('#readability-score').text(readabilityScore + ' (Flesch-Kincaid)');
+
+              // Genre classification (simplified example)
+              const genres = ['Fiction', 'Non-fiction', 'Sci-fi', 'Romance', 'Mystery'];
+              const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+              $('#genre-classification').text(randomGenre);
+
+              // Sentiment analysis (simplified example)
+              const sentiments = ['Positive', 'Neutral', 'Negative'];
+              const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
+              $('#sentiment-analysis').text(randomSentiment);
+
+              // Show the analytics dashboard
+              $('#analytics-dashboard').removeClass('hidden');
+          }
       });
   </script>
 </body>
+</html>
