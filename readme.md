@@ -1,102 +1,147 @@
-AI Book Generator
-=================
+\# BookAI
 
-This Python script uses the OpenAI API to generate a 100,000-word book on a topic of your choice.
+BookAI is a Flask-based web application that generates books using OpenAI's language models. It allows users to specify a topic, target word count, language, and other parameters to create custom books. The application also provides functionality to download the generated book as a PDF.
 
-Prerequisites
--------------
+\## Features
 
-*   Python 3.6 or higher
-    
-*   OpenAI API key
-    
+\- Generate books on any topic using OpenAI's language models
 
-Installation
-------------
+\- Support for multiple languages
 
-1.  Clone this repository or download the script file.
+\- Real-time progress tracking
 
-```
-git clone https://github.com/Adarshagupta/BookAI/
-```
-2. Change the directory
-```
+\- PDF download option
+
+\- Asynchronous generation for improved performance
+
+\## Prerequisites
+
+\- Python 3.10 or higher
+
+\- Docker (optional, for containerized deployment)
+
+\## Installation
+
+1\. Clone the repository:
+
+\`\`\`
+
+git clone https://github.com/yourusername/BookAI.git
+
 cd BookAI
-```
 
-    
-3.  Copy
+\`\`\`
 
-```
-pip install openai
-```
-    
-4.  Open the script in a text editor and replace "your\_api\_key\_here" with your actual OpenAI API key.
+2\. Install the required dependencies:
 
-5.  Run the project
-```
-python book.py
-```
-    
+\`\`\`
 
-Usage
------
+pip install -r requirements.txt
 
-1.  Open a terminal or command prompt.
-    
-2.  Navigate to the directory containing the script.
-    
-3.  Copypython book\_generator.py
-    
-4.  When prompted, enter the topic for your book.
-    
-5.  The script will start generating content, displaying progress as it goes.
-    
-6.  Once complete, the generated book will be saved in a file named generated\_book.txt in the same directory.
-    
+\`\`\`
 
-Important Notes
----------------
+3\. Install the async Flask extension:
 
-*   This script makes multiple API calls to OpenAI, which will incur costs. Be aware of the pricing and set appropriate usage limits in your OpenAI account.
-    
-*   The quality and coherence of the generated book may vary. AI-generated content might not maintain consistent narrative or factual accuracy over 100,000 words.
-    
-*   The script includes error handling for rate limit errors and will pause for 60 seconds if the rate limit is exceeded.
-    
-*   There's a small delay (1 second) between API calls to help avoid hitting rate limits.
-    
-*   The generated content is saved progressively. If the script is interrupted, you'll still have the content generated up to that point.
-    
+\`\`\`
 
-Troubleshooting
----------------
+pip install 'flask\[async\]'
 
-If you encounter issues:
+\`\`\`
 
-1.  Ensure your API key is correct and has the necessary permissions.
-    
-2.  Check for any error messages in the console output.
-    
-3.  Verify that the script has write permissions in the directory.
-    
-4.  If the output file is empty, check the console for error messages or unexpected behavior.
-    
+\## Usage
 
-Ethical Considerations
-----------------------
+1\. Start the Flask application:
 
-*   Be mindful of the content you're generating and its potential uses.
-    
-*   Consider the ethical implications and potential copyright issues of using AI-generated content.
-    
+\`\`\`
 
-Customization
--------------
+python app.py
 
-You can modify the max\_tokens parameter in the generate\_chunk function to adjust the length of each generated chunk. However, be aware that larger values may impact coherence and increase API usage.
+\`\`\`
 
-Disclaimer
-----------
+2\. Open a web browser and navigate to \`http://localhost:5151\` (or the appropriate port if you've changed it).
 
-This script is for educational and experimental purposes. The user is responsible for any content generated and should review and edit the output as necessary.
+3\. Enter the required information in the web interface:
+
+\- OpenAI API Key
+
+\- Model (e.g., "gpt-3.5-turbo")
+
+\- Topic
+
+\- Target word count
+
+\- Language
+
+4\. Click "Generate Book" to start the book generation process.
+
+5\. Monitor the progress in real-time.
+
+6\. Once the book is generated, you can view it in the browser or download it as a PDF.
+
+\## Docker Deployment
+
+To deploy BookAI using Docker:
+
+1\. Build the Docker image:
+
+\`\`\`
+
+docker build -t bookai .
+
+\`\`\`
+
+2\. Run the Docker container:
+
+\`\`\`
+
+docker run -p 5000:5000 bookai
+
+\`\`\`
+
+3\. Access the application at \`http://localhost:5000\`.
+
+\## Project Structure
+
+\- \`app.py\`: Main Flask application file
+
+\- \`templates/index.html\`: HTML template for the web interface
+
+\- \`requirements.txt\`: List of Python dependencies
+
+\- \`Dockerfile\`: Instructions for building the Docker image
+
+\## Configuration
+
+You can modify the following environment variables in the Dockerfile or when running the container:
+
+\- \`FLASK\_APP\`: Set to "app.py"
+
+\- \`FLASK\_RUN\_HOST\`: Set to "0.0.0.0" to make the app accessible outside the container
+
+\- \`FLASK\_RUN\_PORT\`: Set to 5000 by default, can be changed as needed
+
+\## API Endpoints
+
+\- \`/\`: Main page
+
+\- \`/generate\`: POST endpoint for book generation
+
+\- \`/progress\`: Server-sent events endpoint for progress updates
+
+\- \`/download-pdf\`: POST endpoint for PDF generation and download
+
+\## Error Handling
+
+BookAI includes basic error handling for API requests and PDF generation. Check the server logs for detailed error messages in case of issues.
+
+\## Contributing
+
+Contributions to BookAI are welcome! Please feel free to submit a Pull Request.
+
+\## License
+
+\[MIT License\](LICENSE)
+
+\## Disclaimer
+
+BookAI uses OpenAI's API. Make sure you comply with OpenAI's use-case policy and terms of service when using this application.
