@@ -14,7 +14,7 @@ import asyncio
 import aiohttp
 from queue import Queue
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()  # Load environment variables from .env fil
 
 app = Flask(__name__)
 
