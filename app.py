@@ -34,7 +34,7 @@ async def generate_chunk(api_key, model, topic, current_word_count, language, is
                         {"role": "system", "content": f"You are an author writing a book in {language}. Format your response as a part of a book chapter."},
                         {"role": "user", "content": prompt}
                     ],
-                    "max_tokens": 500
+                    "max_tokens": 3000
                 }
             ) as response:
                 result = await response.json()
