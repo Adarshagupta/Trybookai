@@ -92,9 +92,12 @@ def create_pdf(content, title, language):
     return buffer
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def hello():
+    return render_template('hello.html')
 
+@app.route('/playground')
+def playground():
+    return render_template('index.html')
 @app.route('/generate', methods=['POST'])
 async def generate_book():
     model = request.form['model']

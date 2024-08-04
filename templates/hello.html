@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f3f0;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+        .logo {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #c0a080;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #c0a080;
+            transition: all 0.3s ease;
+        }
+        .logo:hover {
+            transform: scale(1.1);
+        }
+        nav ul {
+            display: flex;
+            list-style-type: none;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #c0a080;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: #a08060;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: #f0e6dc;
+            padding: 5px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .search-bar:focus-within {
+            box-shadow: 0 0 10px rgba(192, 160, 128, 0.5);
+        }
+        .search-bar input {
+            border: none;
+            background-color: transparent;
+            outline: none;
+            font-size: 16px;
+            padding: 5px;
+            width: 200px;
+        }
+        .search-icon {
+            color: #c0a080;
+            cursor: pointer;
+        }
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .text-content {
+            flex: 1;
+        }
+        h1 {
+            font-size: 64px;
+            margin-bottom: 30px;
+            color: #c0a080;
+        }
+        .buy-now {
+            background-color: #c0a080;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .buy-now:hover {
+            background-color: #a08060;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .buy-now i {
+            margin-right: 10px;
+        }
+        .image-content {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .main-circle {
+            width: 400px;
+            height: 400px;
+            background-color: #f0cbb3;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        .main-circle:hover {
+            transform: scale(1.05);
+        }
+        .book-image {
+            width: 500px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(15deg);
+            transition: all 0.5s ease;
+        }
+        .main-circle:hover .book-image {
+            transform: translate(-50%, -50%) rotate(0deg) scale(1.1);
+        }
+        .time-badge, .cozy-text {
+            position: absolute;
+            background-color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .time-badge {
+            top: -30px;
+            right: 0;
+        }
+        .cozy-text {
+            bottom: -30px;
+            left: 0;
+        }
+        .time-badge:hover, .cozy-text:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .color-dots {
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .color-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .color-dot:hover {
+            transform: scale(1.2);
+        }
+        .footer-text {
+            text-align: right;
+            color: #c0a080;
+            margin-top: 50px;
+            font-size: 18px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo"><i class="fas fa-book-reader"></i></div>
+            <nav>
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-box"></i> Product</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </header>
+        <div class="main-content">
+            <div class="text-content">
+                <h1>BOOK AI</h1>
+                <a href="#" class="buy-now">
+                    <i class="fas fa-shopping-cart"></i>
+                    Buy Now
+                </a>
+            </div>
+            <div class="image-content">
+                <div class="time-badge"><i class="fas fa-clock"></i> IN 10 MIN</div>
+                <div class="main-circle">
+                    <img src="https://pngimg.com/uploads/book/book_PNG51067.png" alt="AI Book" class="book-image">
+                </div>
+                <div class="cozy-text"><i class="fas fa-heart"></i> ¡Super cozy!</div>
+                <div class="color-dots">
+                    <div class="color-dot" style="background-color: #c0a080;"></div>
+                    <div class="color-dot" style="background-color: #e6a3b7;"></div>
+                    <div class="color-dot" style="background-color: #8fc0a0;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-text">Let's make something good <i class="fas fa-arrow-right"></i></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Smooth scroll for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Color changing functionality
+            const colorDots = document.querySelectorAll('.color-dot');
+            const mainCircle = document.querySelector('.main-circle');
+
+            colorDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    mainCircle.style.backgroundColor = this.style.backgroundColor;
+                });
+            });
+
+            // Search bar functionality
+            const searchBar = document.querySelector('.search-bar input');
+            const searchIcon = document.querySelector('.search-icon');
+
+            searchIcon.addEventListener('click', function() {
+                alert('Searching for: ' + searchBar.value);
+            });
+
+            searchBar.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    alert('Searching for: ' + this.value);
+                }
+            });
+
+            // Add a subtle animation to the book image
+            const bookImage = document.querySelector('.book-image');
+            setInterval(() => {
+                bookImage.style.transform = 'translate(-50%, -50%) rotate(15deg) scale(1.05)';
+                setTimeout(() => {
+                    bookImage.style.transform = 'translate(-50%, -50%) rotate(15deg) scale(1)';
+                }, 500);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
