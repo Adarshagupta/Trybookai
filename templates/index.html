@@ -84,8 +84,8 @@
     <main class="flex flex-col lg:flex-row h-screen p-4 lg:p-8 gap-4">
         <div class="w-full lg:w-96 bg-white shadow-2xl p-6 lg:p-8 flex flex-col rounded-3xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
             <div class="flex justify-between items-center mb-6 lg:mb-10">
-                <img src="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png" alt="BookAI Logo" class="w-12 h-12">
-                <h1 class="text-2xl lg:text-4xl font-bold text-gray-800 text-center">AI Book <span class="text-primary">Generator</span></h1>
+                <img src="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png" alt="BookAI Logo" class="w-12 h-10">
+                <h1 class="text-2xl lg:text-2xl font-bold text-gray-800 text-center">AI Book <span class="text-primary">Generator</span></h1>
                 <button id="settings-button" class="text-gray-600 hover:text-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -120,6 +120,7 @@
                     <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
                     <input type="number" id="word_count" name="word_count" value="10" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
                 </div>
+               
                 <button type="submit" id="generate-book" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
                     Generate Book
                 </button>
@@ -187,6 +188,7 @@
             <div class="bg-white p-6 rounded-lg shadow-xl">
                 <h3 class="text-xl font-bold mb-4">While we generate your book, enjoy this game!</h3>
                 <canvas id="gameCanvas" width="600" height="150" style="border:1px solid #000000;"></canvas>
+                <button id="restartGame" class="mt-4 bg-primary text-white px-4 py-2 rounded-full hidden">Restart Game</button>
                 <p class="mt-2 text-sm text-gray-600">Press spacebar to jump</p>
             </div>
              <!-- Ad banner in loading screen -->
@@ -625,23 +627,37 @@ $('#view-saved-pdfs').click(function() {
         }
     });
 });// Dinosaur game
-let canvas, ctx, dinoY, dinoVelocity, gravity, cactusX, gameLoop, score;
+// Dinosaur game
+let canvas, ctx, dinoY, dinoVelocity, gravity, cactusX, gameLoop, score, gameOver;
 
 function initGame() {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
+    
+    document.addEventListener('keydown', jump);
+    $('#restartGame').click(restartGame);
+    
+    startGame();
+}
+
+function startGame() {
     dinoY = 100;
     dinoVelocity = 0;
     gravity = 0.5;
     cactusX = canvas.width;
     score = 0;
+    gameOver = false;
 
-    document.addEventListener('keydown', jump);
+    $('#restartGame').addClass('hidden');
+    
+    if (gameLoop) {
+        clearInterval(gameLoop);
+    }
     gameLoop = setInterval(updateGame, 20);
 }
 
 function jump(event) {
-    if (event.code === 'Space' && dinoY === 100) {
+    if (event.code === 'Space' && dinoY === 100 && !gameOver) {
         dinoVelocity = -10;
     }
 }
@@ -650,41 +666,52 @@ function updateGame() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Update dino position
-    dinoVelocity += gravity;
-    dinoY += dinoVelocity;
-    if (dinoY > 100) {
-        dinoY = 100;
-        dinoVelocity = 0;
+    if (!gameOver) {
+        // Update dino position
+        dinoVelocity += gravity;
+        dinoY += dinoVelocity;
+        if (dinoY > 100) {
+            dinoY = 100;
+            dinoVelocity = 0;
+        }
+
+        // Update cactus position
+        cactusX -= 5;
+        if (cactusX < 0) {
+            cactusX = canvas.width;
+            score++;
+        }
+
+        // Check collision
+        if (50 < cactusX + 20 && 90 > cactusX && dinoY + 40 > 100) {
+            gameOver = true;
+            $('#restartGame').removeClass('hidden');
+        }
     }
 
     // Draw dino
     ctx.fillStyle = 'green';
     ctx.fillRect(50, dinoY, 40, 40);
 
-    // Update cactus position
-    cactusX -= 5;
-    if (cactusX < 0) {
-        cactusX = canvas.width;
-        score++;
-    }
-
     // Draw cactus
     ctx.fillStyle = 'red';
     ctx.fillRect(cactusX, 100, 20, 40);
-
-    // Check collision
-    if (50 < cactusX + 20 && 90 > cactusX && dinoY + 40 > 100) {
-        clearInterval(gameLoop);
-        ctx.fillStyle = 'black';
-        ctx.font = '30px Arial';
-        ctx.fillText('Game Over! Score: ' + score, 180, 75);
-    }
 
     // Draw score
     ctx.fillStyle = 'black';
     ctx.font = '20px Arial';
     ctx.fillText('Score: ' + score, 10, 30);
+
+    // Draw game over text
+    if (gameOver) {
+        ctx.fillStyle = 'black';
+        ctx.font = '30px Arial';
+        ctx.fillText('Game Over! Score: ' + score, 180, 75);
+    }
+}
+
+function restartGame() {
+    startGame();
 }
 
 function showGame() {
