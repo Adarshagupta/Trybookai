@@ -21,15 +21,6 @@
             },
         }
     </script>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YV0ZQNP2YS"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-YV0ZQNP2YS');
-</script>
     <meta name="description" content="AI Book Generator: Enrich your online business with data-driven insights. Discover our products, features, and company information.">
     <meta name="keywords" content="AI Book Generator, online business, data insights, products, features, company">
     <meta property="og:title" content="AI Book Generator">
@@ -52,362 +43,455 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.18);
         }
-    </style>
-	<script defer data-domain="bookai.onrender.com/playground" src="https://plausible.io/js/script.js"></script>
+           body.dark-theme {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
 
+    body.dark-theme .bg-white {
+        background-color: #2a2a2a;
+    }
+
+    body.dark-theme .text-gray-800 {
+        color: #e0e0e0;
+    }
+
+    body.dark-theme .text-gray-700 {
+        color: #d0d0d0;
+    }
+
+    body.dark-theme .bg-gray-50 {
+        background-color: #3a3a3a;
+    }
+
+    body.dark-theme .border-gray-300 {
+        border-color: #4a4a4a;
+    }
+
+    body.dark-theme .text-gray-600 {
+        color: #b0b0b0;
+    }
+
+    body.dark-theme .bg-gray-100 {
+        background-color: #3a3a3a;
+    }
+    </style>
 </head>
 <body class="font-sans text-gray-800 min-h-screen flex flex-col gradient-bg">
-  <main class="flex flex-col md:flex-row h-screen p-4 md:p-8 gap-4">
-      <div class="w-full md:w-96 bg-white shadow-2xl p-6 md:p-8 flex flex-col rounded-3xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
-          <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 md:mb-10 text-center">AI Book <span class="text-primary">Generator</span></h1>
-          <form id="book-form" class="space-y-4 md:space-y-6 flex-grow">
-              <div class="transition-all duration-300 hover:transform hover:scale-105">
-                  <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
-                  <select id="model" name="model" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-                      <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                      <option value="gpt-4o-mini">GPT-4o Mini</option>
-                      <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
-                  </select>
-              </div>
-              <div class="transition-all duration-300 hover:transform hover:scale-105">
-                  <label for="language" class="block mb-2 text-sm font-medium text-gray-700">Language</label>
-                  <select id="language" name="language" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-                      <option value="english">English</option>
-                      <option value="hindi">Hindi (Experimental)</option>
-                      <option value="spanish">Spanish</option>
-                  </select>
-              </div>
-              <div class="transition-all duration-300 hover:transform hover:scale-105">
-                  <label for="topic" class="block mb-2 text-sm font-medium text-gray-700">Book Topic</label>
-                  <input type="text" id="topic" name="topic" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" placeholder="Enter your book topic...">
-              </div>
-              <div class="transition-all duration-300 hover:transform hover:scale-105">
-                  <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
-                  <input type="number" id="word_count" name="word_count" value="10000" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-              </div>
-              <button type="submit" id="generate-book" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
-                  Generate Book
-              </button>
-          </form>
-          <div id="progress" class="mt-4 md:mt-6 text-gray-600 text-center text-sm"></div>
-          <div id="error-message" class="mt-4 md:mt-6 p-4 bg-red-100 text-red-700 rounded-xl text-center font-medium text-sm hidden"></div>
-      </div>
-      <div class="flex-1 flex flex-col bg-white rounded-3xl shadow-2xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
-          <div class="flex-1 overflow-auto p-4 md:p-8">
-              <div class="max-w-3xl mx-auto">
-                  <div class="page-content space-y-6"></div>
-              </div>
-          </div>
-          <!-- Text-to-speech controls -->
-          <div class="p-4 border-t border-gray-200">
-              <div class="flex justify-between items-center">
-                  <button id="play-pause" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300">
-                      Play
-                  </button>
-                  <div class="flex items-center">
-                      <label for="voice-select" class="mr-2 text-sm">Voice:</label>
-                      <select id="voice-select" class="p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
-                          <!-- Voice options will be populated by JavaScript -->
-                      </select>
-                  </div>
-              </div>
-          </div>
-          <!-- Analytics Dashboard -->
-          <div id="analytics-dashboard" class="p-4 border-t border-gray-200 hidden">
-              <h3 class="text-xl font-semibold mb-4">Analytics Dashboard</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="bg-gray-100 p-4 rounded-lg">
-                      <h4 class="font-medium mb-2">Word Count</h4>
-                      <p id="word-count" class="text-2xl font-bold"></p>
-                  </div>
-                  <div class="bg-gray-100 p-4 rounded-lg">
-                      <h4 class="font-medium mb-2">Readability Score</h4>
-                      <p id="readability-score" class="text-2xl font-bold"></p>
-                  </div>
-                  <div class="bg-gray-100 p-4 rounded-lg">
-                      <h4 class="font-medium mb-2">Genre Classification</h4>
-                      <p id="genre-classification" class="text-2xl font-bold"></p>
-                  </div>
-                  <div class="bg-gray-100 p-4 rounded-lg">
-                      <h4 class="font-medium mb-2">Sentiment Analysis</h4>
-                      <p id="sentiment-analysis" class="text-2xl font-bold"></p>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </main>
-
- <div class="loading fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex flex-col justify-center items-center z-50 hidden transition-opacity duration-300">
+    <main class="flex flex-col md:flex-row h-screen p-4 md:p-8 gap-4">
+        <div class="w-full md:w-96 bg-white shadow-2xl p-6 md:p-8 flex flex-col rounded-3xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
+            <div class="flex justify-between items-center mb-6 md:mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center">AI Book <span class="text-primary">Generator</span></h1>
+                <button id="settings-button" class="text-gray-600 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+            </div>
+            <form id="book-form" class="space-y-4 md:space-y-6 flex-grow">
+                <div class="transition-all duration-300 hover:transform hover:scale-105">
+                    <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
+                    <select id="model" name="model" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="gpt-4o-mini">GPT-4o Mini</option>
+                        <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
+                    </select>
+                </div>
+                <div class="transition-all duration-300 hover:transform hover:scale-105">
+                    <label for="language" class="block mb-2 text-sm font-medium text-gray-700">Language</label>
+                    <select id="language" name="language" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                        <option value="english">English</option>
+                        <option value="hindi">Hindi (Experimental)</option>
+                        <option value="spanish">Spanish</option>
+                    </select>
+                </div>
+                <div class="transition-all duration-300 hover:transform hover:scale-105">
+                    <label for="topic" class="block mb-2 text-sm font-medium text-gray-700">Book Topic</label>
+                    <input type="text" id="topic" name="topic" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" placeholder="Enter your book topic...">
+                </div>
+                <div class="transition-all duration-300 hover:transform hover:scale-105">
+                    <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
+                    <input type="number" id="word_count" name="word_count" value="10000" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                </div>
+                <button type="submit" id="generate-book" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
+                    Generate Book
+                </button>
+            </form>
+            <div id="progress" class="mt-4 md:mt-6 text-gray-600 text-center text-sm"></div>
+            <div id="error-message" class="mt-4 md:mt-6 p-4 bg-red-100 text-red-700 rounded-xl text-center font-medium text-sm hidden"></div>
+        </div>
+        <div class="flex-1 flex flex-col bg-white rounded-3xl shadow-2xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
+            <div class="flex-1 overflow-auto p-4 md:p-8">
+                <div class="max-w-3xl mx-auto">
+                    <div class="page-content space-y-6"></div>
+                </div>
+            </div>
+            <!-- Text-to-speech controls -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex justify-between items-center">
+                    <button id="play-pause" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300">
+                        Play
+                    </button>
+                    <div class="flex items-center">
+                        <label for="voice-select" class="mr-2 text-sm">Voice:</label>
+                        <select id="voice-select" class="p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <!-- Voice options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- Analytics Dashboard -->
+            <div id="analytics-dashboard" class="p-4 border-t border-gray-200 hidden">
+                <h3 class="text-xl font-semibold mb-4">Analytics Dashboard</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">Word Count</h4>
+                        <p id="word-count" class="text-2xl font-bold"></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">Readability Score</h4>
+                        <p id="readability-score" class="text-2xl font-bold"></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">Genre Classification</h4>
+                        <p id="genre-classification" class="text-2xl font-bold"></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">Sentiment Analysis</h4>
+                        <p id="sentiment-analysis" class="text-2xl font-bold"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+  
+    <!-- Loading overlay -->
+    <div class="loading fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex flex-col justify-center items-center z-50 hidden transition-opacity duration-300">
         <div class="text-center text-white bg-gray-800 p-6 rounded-2xl shadow-xl transform transition-all duration-300 hover:scale-105 mb-4">
             <div class="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
             <p class="text-lg font-semibold">Generating your book...</p>
             <p class="text-xs mt-2 text-gray-300">This may take a while based on the word count</p>
         </div>
-        <!-- New ad banner in loading screen -->
+        <!-- Ad banner in loading screen -->
         <div class="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
             <p class="text-xs text-gray-500 text-center py-1">Advertisement</p>
             <div class="ad-banner" style="width: 100%; height: 100px; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center;">
-                <p class="text-gray-400"><script type="text/javascript">
-	atOptions = {
-		'key' : '66f25ad1d96e9aef772424016137476f',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.topcreativeformat.com/66f25ad1d96e9aef772424016137476f/invoke.js"></script>)</p>
+                <p class="text-gray-400">Ad Banner (320x100)</p>
             </div>
         </div>
     </div>
-
-  <div id="ad-wall" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden transition-opacity duration-300">
-      <div class="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-xl w-full mx-4 relative transform transition-all duration-300 hover:scale-105">
-          <h2 class="text-2xl md:text-3xl font-bold mb-4 text-gray-800">Advertisement</h2>
-          <p class="mb-4 text-gray-600">This is an advertisement. You can close this ad in <span id="countdown" class="font-semibold text-primary">30</span> seconds.</p>
-          <p id="ad-reason" class="mb-4 text-xs md:text-sm text-gray-500"></p>
-          <div id="ad-content" class="mb-4 rounded-lg overflow-hidden shadow-lg">
-<script type="text/javascript">
-	atOptions = {
-		'key' : '66f25ad1d96e9aef772424016137476f',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.topcreativeformat.com/66f25ad1d96e9aef772424016137476f/invoke.js"></script>          </div>
-          <button id="close-ad" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 hidden transition-colors duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-          </button>
-      </div>
-  </div>
-
-  <button id="download-pdf" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
-      Download Your Book
-  </button>
   
+    <!-- Ad wall -->
+    <div id="ad-wall" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden transition-opacity duration-300">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-xl w-full mx-4 relative transform transition-all duration-300 hover:scale-105">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 text-gray-800">Advertisement</h2>
+            <p class="mb-4 text-gray-600">This is an advertisement. You can close this ad in <span id="countdown" class="font-semibold text-primary">30</span> seconds.</p>
+            <p id="ad-reason" class="mb-4 text-xs md:text-sm text-gray-500"></p>
+            <div id="ad-content" class="mb-4 rounded-lg overflow-hidden shadow-lg">
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/Y-JKELyGPdo?autoplay=1&mute=1" title="Deadpool vs Francis - Final Fight Scene - Deadpool (2016) Movie Clip HD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <button id="close-ad" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 hidden transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+  
+    <!-- Download buttons -->
+    <button id="download-pdf" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
+        Download Your Book
+    </button>
+    <button id="download-audio" class="fixed bottom-5 left-2/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hidden">
+      Download Audio Book (Coming soon)
+    </button>
+  
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+            <h2 class="text-2xl font-bold mb-4">Settings</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                <select id="theme-select" class="w-full p-2 border rounded">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
+                <input type="range" id="font-size-range" min="12" max="24" value="16" class="w-full">
+                <span id="font-size-value" class="text-sm text-gray-500">16px</span>
+            </div>
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" id="analytics-toggle" class="mr-2">
+                    <span class="text-sm font-medium text-gray-700">Enable Analytics Dashboard</span>
+                </label>
+            </div>
+            <button id="close-settings" class="w-full bg-primary text-white py-2 rounded hover:bg-indigo-700 transition-colors duration-300">Close</button>
+        </div>
+    </div>
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+       $(document).ready(function() {
+    // Initialize EventSource for progress updates
+    var eventSource;
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-      $(document).ready(function() {
-          // Initialize EventSource for progress updates
-          var eventSource;
+    $('#book-form').submit(function(e) {
+        e.preventDefault();
+        showAdWall('generate');
+    });
 
-          $('#book-form').submit(function(e) {
-              e.preventDefault();
-              showAdWall('generate');
-          });
+    function showAdWall(action) {
+        $('#ad-wall').removeClass('hidden');
+        var countdown = 5;
+        var adReason = "";
 
-          function showAdWall(action) {
-              $('#ad-wall').removeClass('hidden');
-              var countdown = 5;
-              var adReason = "";
+        if ($('#model').val() === 'gpt-3.5-turbo') {
+            countdown = 30;
+            adReason = "You've selected GPT-3.5 Turbo, which requires a longer processing time.";
+        }
 
-              if ($('#model').val() === 'gpt-3.5-turbo') {
-                  countdown = 30;
-                  adReason = "You've selected GPT-3.5 Turbo, which requires a longer processing time.";
-              }
+        if (parseInt($('#word_count').val()) > 1000) {
+            countdown = 50;
+            adReason = "You've requested over 1000 words, which requires more processing time.";
+        }
 
-              if (parseInt($('#word_count').val()) > 1000) {
-                  countdown = 50;
-                  adReason = "You've requested over 1000 words, which requires more processing time.";
-              }
+        $('#countdown').text(countdown);
+        $('#ad-reason').text(adReason);
 
-              $('#countdown').text(countdown);
-              $('#ad-reason').text(adReason);
+        var countdownInterval = setInterval(function() {
+            countdown--;
+            $('#countdown').text(countdown);
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                $('#close-ad').removeClass('hidden');
+            }
+        }, 1000);
 
-              var countdownInterval = setInterval(function() {
-                  countdown--;
-                  $('#countdown').text(countdown);
-                  if (countdown <= 0) {
-                      clearInterval(countdownInterval);
-                      $('#close-ad').removeClass('hidden');
-                  }
-              }, 1000);
+        $('#close-ad').off('click').on('click', function() {
+            $('#ad-wall').addClass('hidden');
+            if (action === 'generate') {
+                generateBook();
+            } else if (action === 'download') {
+                downloadPDF();
+            }
+        });
+    }
 
-              $('#close-ad').off('click').on('click', function() {
-                  $('#ad-wall').addClass('hidden');
-                  if (action === 'generate') {
-                      generateBook();
-                  } else if (action === 'download') {
-                      downloadPDF();
-                  }
-              });
-          }
+    function generateBook() {
+        var formData = $('#book-form').serialize();
+        $('#progress').text('');
+        $('.page-content').empty();
+        $('.loading').show();
+        $('#download-pdf').hide();
+        $('#error-message').hide();
+        $('#analytics-dashboard').addClass('hidden');
+        
+        // Close existing EventSource if it exists
+        if (eventSource) {
+            eventSource.close();
+        }
 
-          function generateBook() {
-              var formData = $('#book-form').serialize();
-              $('#progress').text('');
-              $('.page-content').empty();
-              $('.loading').show();
-              $('#download-pdf').hide();
-              $('#error-message').hide();
-              $('#analytics-dashboard').addClass('hidden');
-              
-              // Close existing EventSource if it exists
-              if (eventSource) {
-                  eventSource.close();
-              }
+        // Create new EventSource for progress updates
+        eventSource = new EventSource('/progress');
+        eventSource.onmessage = function(event) {
+            if (event.data !== 'keep-alive') {
+                $('#progress').text('Words generated: ' + event.data);
+            }
+        };
+        
+        $.ajax({
+            url: '/generate',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                $('.loading').hide();
+                $('.page-content').html(response.content);
+                $('#progress').text('Book generated! Word count: ' + response.word_count);
+                $('#download-pdf').show();
+                
+                // Apply current font size to new content
+                $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
+                
+                // Close EventSource after successful generation
+                eventSource.close();
 
-              // Create new EventSource for progress updates
-              eventSource = new EventSource('/progress');
-              eventSource.onmessage = function(event) {
-                  if (event.data !== 'keep-alive') {
-                      $('#progress').text('Words generated: ' + event.data);
-                  }
-              };
-              
-              $.ajax({
-                  url: '/generate',
-                  method: 'POST',
-                  data: formData,
-                  success: function(response) {
-                      $('.loading').hide();
-                      $('.page-content').html(response.content);
-                      $('#progress').text('Book generated! Word count: ' + response.word_count);
-                      $('#download-pdf').show();
-                      
-                      // Close EventSource after successful generation
-                      eventSource.close();
+                // Calculate and display analytics
+                displayAnalytics(response.content);
+            },
+            error: function(xhr, status, error) {
+                $('.loading').hide();
+                $('#error-message').text('An error occurred while generating the book: ' + error).show();
+                
+                // Close EventSource on error
+                eventSource.close();
+            }
+        });
+    }
 
-                      // Calculate and display analytics
-                      displayAnalytics(response.content);
-                  },
-                  error: function(xhr, status, error) {
-                      $('.loading').hide();
-                      $('#error-message').text('An error occurred while generating the book: ' + error).show();
-                      
-                      // Close EventSource on error
-                      eventSource.close();
-                  }
-              });
-          }
+    $('#download-pdf').click(function() {
+        showAdWall('download');
+    });
 
-          $('#download-pdf').click(function() {
-              showAdWall('download');
-          });
+    function downloadPDF() {
+        var content = $('.page-content').html();
+        var title = $('#topic').val();
+        var language = $('#language').val();
+        $('.loading').show();
+        $('#error-message').hide();
+        
+        $.ajax({
+            url: '/download-pdf',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({content: content, title: title, language: language}),
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function(blob) {
+                $('.loading').hide();
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = title + ".pdf";
+                link.click();
+            },
+            error: function(xhr, status, error) {
+                $('.loading').hide();
+                var errorMessage = 'An error occurred while generating the PDF.';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage += ' Details: ' + xhr.responseJSON.error;
+                }
+                $('#error-message').text(errorMessage).show();
+            }
+        });
+    }
 
-          function downloadPDF() {
-              var content = $('.page-content').html();
-              var title = $('#topic').val();
-              var language = $('#language').val();
-              $('.loading').show();
-              $('#error-message').hide();
-              
-              $.ajax({
-                  url: '/download-pdf',
-                  method: 'POST',
-                  contentType: 'application/json',
-                  data: JSON.stringify({content: content, title: title, language: language}),
-                  xhrFields: {
-                      responseType: 'blob'
-                  },
-                  success: function(blob) {
-                      $('.loading').hide();
-                      var link = document.createElement('a');
-                      link.href = window.URL.createObjectURL(blob);
-                      link.download = title + ".pdf";
-                      link.click();
-                  },
-                  error: function(xhr, status, error) {
-                      $('.loading').hide();
-                      var errorMessage = 'An error occurred while generating the PDF.';
-                      if (xhr.responseJSON && xhr.responseJSON.error) {
-                          errorMessage += ' Details: ' + xhr.responseJSON.error;
-                      }
-                      $('#error-message').text(errorMessage).show();
-                  }
-              });
-          }
+    // Text-to-speech functionality
+    let speechSynthesis = window.speechSynthesis;
+    let utterance = new SpeechSynthesisUtterance();
+    let isPlaying = false;
 
-          // Text-to-speech functionality
-          let speechSynthesis = window.speechSynthesis;
-          let utterance = new SpeechSynthesisUtterance();
-          let isPlaying = false;
+    // Populate voice options
+    function populateVoiceList() {
+        let voices = speechSynthesis.getVoices();
+        let voiceSelect = document.getElementById('voice-select');
+        voiceSelect.innerHTML = '';
+        voices.forEach((voice, i) => {
+            let option = document.createElement('option');
+            option.textContent = `${voice.name} (${voice.lang})`;
+            option.setAttribute('data-lang', voice.lang);
+            option.setAttribute('data-name', voice.name);
+            voiceSelect.appendChild(option);
+        });
+    }
 
-          // Populate voice options
-          function populateVoiceList() {
-              let voices = speechSynthesis.getVoices();
-              let voiceSelect = document.getElementById('voice-select');
-              voiceSelect.innerHTML = '';
-              voices.forEach((voice, i) => {
-                  let option = document.createElement('option');
-                  option.textContent = `${voice.name} (${voice.lang})`;
-                  option.setAttribute('data-lang', voice.lang);
-                  option.setAttribute('data-name', voice.name);
-                  voiceSelect.appendChild(option);
-              });
-          }
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
 
-          populateVoiceList();
-          if (speechSynthesis.onvoiceschanged !== undefined) {
-              speechSynthesis.onvoiceschanged = populateVoiceList;
-          }
+    // Play/Pause functionality
+    document.getElementById('play-pause').addEventListener('click', function() {
+        let text = document.querySelector('.page-content').textContent;
+        if (!isPlaying) {
+            utterance.text = text;
+            let selectedVoice = document.getElementById('voice-select').selectedOptions[0].getAttribute('data-name');
+            utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
+            speechSynthesis.speak(utterance);
+            this.textContent = 'Pause';
+            isPlaying = true;
+        } else {
+            speechSynthesis.pause();
+            this.textContent = 'Resume';
+            isPlaying = false;
+        }
+    });
 
-          // Play/Pause functionality
-          document.getElementById('play-pause').addEventListener('click', function() {
-              let text = document.querySelector('.page-content').textContent;
-              if (!isPlaying) {
-                  utterance.text = text;
-                  let selectedVoice = document.getElementById('voice-select').selectedOptions[0].getAttribute('data-name');
-                  utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
-                  speechSynthesis.speak(utterance);
-                  this.textContent = 'Pause';
-                  isPlaying = true;
-              } else {
-                  speechSynthesis.pause();
-                  this.textContent = 'Resume';
-                  isPlaying = false;
-              }
-          });
+    // Update voice when selection changes
+    document.getElementById('voice-select').addEventListener('change', function() {
+        if (isPlaying) {
+            speechSynthesis.cancel();
+            let text = document.querySelector('.page-content').textContent;
+            utterance = new SpeechSynthesisUtterance(text);
+            let selectedVoice = this.selectedOptions[0].getAttribute('data-name');
+            utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
+            speechSynthesis.speak(utterance);
+        }
+    });
 
-          // Update voice when selection changes
-          document.getElementById('voice-select').addEventListener('change', function() {
-              if (isPlaying) {
-                  speechSynthesis.cancel();
-                  let text = document.querySelector('.page-content').textContent;
-                  utterance = new SpeechSynthesisUtterance(text);
-                  let selectedVoice = this.selectedOptions[0].getAttribute('data-name');
-                  utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
-                  speechSynthesis.speak(utterance);
-              }
-          });
+    // Handle speech synthesis ending
+    utterance.onend = function() {
+        document.getElementById('play-pause').textContent = 'Play';
+        isPlaying = false;
+    };
 
-          // Handle speech synthesis ending
-          utterance.onend = function() {
-              document.getElementById('play-pause').textContent = 'Play';
-              isPlaying = false;
-          };
+    // Analytics Dashboard functionality
+    function displayAnalytics(content) {
+        // Word count
+        const wordCount = content.split(/\s+/).length;
+        $('#word-count').text(wordCount);
 
-          // Analytics Dashboard functionality
-          function displayAnalytics(content) {
-              // Word count
-              const wordCount = content.split(/\s+/).length;
-              $('#word-count').text(wordCount);
+        // Readability score (using a simple formula)
+        const sentences = content.split(/[.!?]+/);
+        const averageWordsPerSentence = wordCount / sentences.length;
+        const readabilityScore = Math.round(206.835 - 1.015 * averageWordsPerSentence);
+        $('#readability-score').text(readabilityScore + ' (Flesch-Kincaid)');
 
-              // Readability score (using a simple formula)
-              const sentences = content.split(/[.!?]+/);
-              const averageWordsPerSentence = wordCount / sentences.length;
-              const readabilityScore = Math.round(206.835 - 1.015 * averageWordsPerSentence);
-              $('#readability-score').text(readabilityScore + ' (Flesch-Kincaid)');
+        // Genre classification (simplified example)
+        const genres = ['Fiction', 'Non-fiction', 'Sci-fi', 'Romance', 'Mystery'];
+        const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+        $('#genre-classification').text(randomGenre);
 
-              // Genre classification (simplified example)
-              const genres = ['Fiction', 'Non-fiction', 'Sci-fi', 'Romance', 'Mystery'];
-              const randomGenre = genres[Math.floor(Math.random() * genres.length)];
-              $('#genre-classification').text(randomGenre);
+        // Sentiment analysis (simplified example)
+        const sentiments = ['Positive', 'Neutral', 'Negative'];
+        const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
+        $('#sentiment-analysis').text(randomSentiment);
 
-              // Sentiment analysis (simplified example)
-              const sentiments = ['Positive', 'Neutral', 'Negative'];
-              const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
-              $('#sentiment-analysis').text(randomSentiment);
+        // Show the analytics dashboard
+        $('#analytics-dashboard').removeClass('hidden');
+    }
 
-              // Show the analytics dashboard
-              $('#analytics-dashboard').removeClass('hidden');
-          }
-      });
+    // Settings functionality
+    $('#settings-button').click(function() {
+        $('#settings-modal').removeClass('hidden');
+    });
+
+    $('#close-settings').click(function() {
+        $('#settings-modal').addClass('hidden');
+    });
+
+    // Theme toggle
+    $('#theme-select').change(function() {
+        if ($(this).val() === 'dark') {
+            $('body').addClass('dark-theme');
+        } else {
+            $('body').removeClass('dark-theme');
+        }
+    });
+
+    // Font size adjustment
+    $('#font-size-range').on('input', function() {
+        let fontSize = $(this).val();
+        $('.page-content').css('font-size', fontSize + 'px');
+        $('#font-size-value').text(fontSize + 'px');
+    });
+
+    // Apply initial font size
+    $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
+    $('#font-size-value').text($('#font-size-range').val() + 'px');
+
+    // Analytics dashboard toggle
+    $('#analytics-toggle').change(function() {
+        if ($(this).is(':checked')) {
+            $('#analytics-dashboard').removeClass('hidden');
+        } else {
+            $('#analytics-dashboard').addClass('hidden');
+        }
+    });
+});
   </script>
 </body>
 </html>
