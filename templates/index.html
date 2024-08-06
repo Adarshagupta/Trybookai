@@ -97,8 +97,9 @@
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
                     <select id="model" name="model" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
                         <option value="gpt-4o-mini">GPT-4o Mini</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="gpt-4-turbo	">GPT-4-turbo</oSption>
                         <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
                     </select>
                 </div>
@@ -110,13 +111,14 @@
                         <option value="spanish">Spanish</option>
                     </select>
                 </div>
+                
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="topic" class="block mb-2 text-sm font-medium text-gray-700">Book Topic</label>
                     <input type="text" id="topic" name="topic" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" placeholder="Enter your book topic...">
                 </div>
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
-                    <input type="number" id="word_count" name="word_count" value="10000" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                    <input type="number" id="word_count" name="word_count" value="10" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
                 </div>
                 <button type="submit" id="generate-book" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
                     Generate Book
@@ -179,13 +181,16 @@
             <div class="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
             <p class="text-lg font-semibold">Generating your book...</p>
             <p class="text-xs mt-2 text-gray-300">This may take a while based on the word count</p>
+            
         </div>
-        <!-- Ad banner in loading screen -->
-        <div class="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
-            <p class="text-xs text-gray-500 text-center py-1">Advertisement</p>
-            <div class="ad-banner" style="width: 100%; height: 100px; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center;">
-                <p class="text-gray-400">Ad Banner (320x100)</p>
+        <div id="game-container" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl">
+                <h3 class="text-xl font-bold mb-4">While we generate your book, enjoy this game!</h3>
+                <canvas id="gameCanvas" width="600" height="150" style="border:1px solid #000000;"></canvas>
+                <p class="mt-2 text-sm text-gray-600">Press spacebar to jump</p>
             </div>
+             <!-- Ad banner in loading screen -->
+        
         </div>
     </div>
   
@@ -338,49 +343,53 @@
             }
     
             function generateBook() {
-                var formData = $('#book-form').serialize();
-                $('#progress').text('');
-                $('.page-content').empty();
-                $('.loading').show();
-                $('#download-pdf').hide();
-                $('#error-message').hide();
-                $('#analytics-dashboard').addClass('hidden');
-                
-                if (eventSource) {
-                    eventSource.close();
-                }
+    var formData = $('#book-form').serialize();
+    $('#progress').text('');
+    $('.page-content').empty();
+    $('.loading').show();
+    $('#download-pdf').hide();
+    $('#error-message').hide();
+    $('#analytics-dashboard').addClass('hidden');
     
-                eventSource = new EventSource('/progress');
-                eventSource.onmessage = function(event) {
-                    if (event.data !== 'keep-alive') {
-                        $('#progress').text('Words generated: ' + event.data);
-                    }
-                };
-                
-                $.ajax({
-                    url: '/generate',
-                    method: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        $('.loading').hide();
-                        $('.page-content').html(response.content);
-                        $('#progress').text('Book generated! Word count: ' + response.word_count);
-                        $('#download-pdf').show();
-                        
-                        $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
-                        
-                        eventSource.close();
+    showGame(); // Show the game while generating
+
+    if (eventSource) {
+        eventSource.close();
+    }
+
+    eventSource = new EventSource('/progress');
+    eventSource.onmessage = function(event) {
+        if (event.data !== 'keep-alive') {
+            $('#progress').text('Words generated: ' + event.data);
+        }
+    };
     
-                        displayAnalytics(response.content);
-                    },
-                    error: function(xhr, status, error) {
-                        $('.loading').hide();
-                        $('#error-message').text('An error occurred while generating the book: ' + error).show();
-                        
-                        eventSource.close();
-                    }
-                });
-            }
+    $.ajax({
+        url: '/generate',
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+            $('.loading').hide();
+            hideGame(); // Hide the game when generation is complete
+            $('.page-content').html(response.content);
+            $('#progress').text('Book generated! Word count: ' + response.word_count);
+            $('#download-pdf').show();
+            
+            $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
+            
+            eventSource.close();
+
+            displayAnalytics(response.content);
+        },
+        error: function(xhr, status, error) {
+            $('.loading').hide();
+            hideGame(); // Hide the game if there's an error
+            $('#error-message').text('An error occurred while generating the book: ' + error).show();
+            
+            eventSource.close();
+        }
+    });
+}
     
             $('#download-pdf').click(function() {
                 showAdWall('download');
@@ -615,7 +624,81 @@ $('#view-saved-pdfs').click(function() {
             $('#error-message').text('An error occurred while fetching saved PDFs: ' + error).show();
         }
     });
-});
+});// Dinosaur game
+let canvas, ctx, dinoY, dinoVelocity, gravity, cactusX, gameLoop, score;
+
+function initGame() {
+    canvas = document.getElementById('gameCanvas');
+    ctx = canvas.getContext('2d');
+    dinoY = 100;
+    dinoVelocity = 0;
+    gravity = 0.5;
+    cactusX = canvas.width;
+    score = 0;
+
+    document.addEventListener('keydown', jump);
+    gameLoop = setInterval(updateGame, 20);
+}
+
+function jump(event) {
+    if (event.code === 'Space' && dinoY === 100) {
+        dinoVelocity = -10;
+    }
+}
+
+function updateGame() {
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update dino position
+    dinoVelocity += gravity;
+    dinoY += dinoVelocity;
+    if (dinoY > 100) {
+        dinoY = 100;
+        dinoVelocity = 0;
+    }
+
+    // Draw dino
+    ctx.fillStyle = 'green';
+    ctx.fillRect(50, dinoY, 40, 40);
+
+    // Update cactus position
+    cactusX -= 5;
+    if (cactusX < 0) {
+        cactusX = canvas.width;
+        score++;
+    }
+
+    // Draw cactus
+    ctx.fillStyle = 'red';
+    ctx.fillRect(cactusX, 100, 20, 40);
+
+    // Check collision
+    if (50 < cactusX + 20 && 90 > cactusX && dinoY + 40 > 100) {
+        clearInterval(gameLoop);
+        ctx.fillStyle = 'black';
+        ctx.font = '30px Arial';
+        ctx.fillText('Game Over! Score: ' + score, 180, 75);
+    }
+
+    // Draw score
+    ctx.fillStyle = 'black';
+    ctx.font = '20px Arial';
+    ctx.fillText('Score: ' + score, 10, 30);
+}
+
+function showGame() {
+    $('#game-container').removeClass('hidden');
+    initGame();
+}
+
+function hideGame() {
+    $('#game-container').addClass('hidden');
+    if (gameLoop) {
+        clearInterval(gameLoop);
+    }
+}
+
         </script>
 </body>
 </html>
