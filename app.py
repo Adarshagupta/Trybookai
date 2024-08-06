@@ -13,8 +13,10 @@ import io
 import asyncio
 import aiohttp
 from queue import Queue
+import sqlite3
+from datetime import datetime
 
-load_dotenv()  # Load environment variables from .env fil
+load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
 
@@ -23,6 +25,21 @@ progress_queue = Queue()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY:
     raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
+
+# Initialize SQLite database
+def init_db():
+    conn = sqlite3.connect('pdfs.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS pdfs
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  ip TEXT,
+                  title TEXT,
+                  filepath TEXT,
+                  timestamp TEXT)''')
+    conn.commit()
+    conn.close()
+
+init_db()
 
 async def generate_chunk(model, topic, current_word_count, language, is_new_chapter=False):
     if is_new_chapter:
@@ -95,9 +112,14 @@ def create_pdf(content, title, language):
 def hello():
     return render_template('hello.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/playground')
 def playground():
     return render_template('index.html')
+
 @app.route('/generate', methods=['POST'])
 async def generate_book():
     model = request.form['model']
@@ -138,7 +160,6 @@ async def generate_book():
         'word_count': actual_word_count
     })
 
-
 @app.route('/progress')
 def progress():
     def generate(): 
@@ -159,9 +180,93 @@ def download_pdf():
         language = request.json['language']
         pdf_buffer = create_pdf(content, title, language)
         
-        return send_file(pdf_buffer, download_name=f"{title}.pdf", as_attachment=True, mimetype='application/pdf')
+        # Save the PDF
+        ip = request.remote_addr
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{ip}_{timestamp}.pdf"
+        filepath = os.path.join('saved_pdfs', filename)
+        os.makedirs('saved_pdfs', exist_ok=True)
+        with open(filepath, 'wb') as f:
+            f.write(pdf_buffer.getvalue())
+        
+        # Save metadata to database
+        conn = sqlite3.connect('pdfs.db')
+        c = conn.cursor()
+        c.execute("INSERT INTO pdfs (ip, title, filepath, timestamp) VALUES (?, ?, ?, ?)",
+                  (ip, title, filepath, timestamp))
+        conn.commit()
+        conn.close()
+        
+        return send_file(io.BytesIO(pdf_buffer.getvalue()), download_name=f"{title}.pdf", as_attachment=True, mimetype='application/pdf')
     except Exception as e:
         app.logger.error(f"PDF download error: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/save-pdf', methods=['POST'])
+def save_pdf():
+    try:
+        content = request.json['content']
+        title = request.json['title']
+        language = request.json['language']
+        ip = request.remote_addr
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        pdf_buffer = create_pdf(content, title, language)
+        
+        # Save PDF to file
+        filename = f"{ip}_{timestamp}.pdf"
+        filepath = os.path.join('saved_pdfs', filename)
+        os.makedirs('saved_pdfs', exist_ok=True)
+        with open(filepath, 'wb') as f:
+            f.write(pdf_buffer.getvalue())
+        
+        # Save metadata to database
+        conn = sqlite3.connect('pdfs.db')
+        c = conn.cursor()
+        c.execute("INSERT INTO pdfs (ip, title, filepath, timestamp) VALUES (?, ?, ?, ?)",
+                  (ip, title, filepath, timestamp))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        app.logger.error(f"PDF save error: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/get-saved-pdfs', methods=['GET'])
+def get_saved_pdfs():
+    try:
+        ip = request.remote_addr
+        conn = sqlite3.connect('pdfs.db')
+        c = conn.cursor()
+        c.execute("SELECT id, title, timestamp FROM pdfs WHERE ip = ? ORDER BY timestamp DESC", (ip,))
+        pdfs = [{'id': row[0], 'title': row[1], 'timestamp': row[2]} for row in c.fetchall()]
+        conn.close()
+        return jsonify({'pdfs': pdfs})
+    except Exception as e:
+        app.logger.error(f"Get saved PDFs error: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/download-saved-pdf/<int:pdf_id>', methods=['GET'])
+def download_saved_pdf(pdf_id):
+    try:
+        ip = request.remote_addr
+        conn = sqlite3.connect('pdfs.db')
+        c = conn.cursor()
+        c.execute("SELECT filepath, title FROM pdfs WHERE id = ? AND ip = ?", (pdf_id, ip))
+        result = c.fetchone()
+        conn.close()
+        
+        if result is None:
+            return jsonify({'error': 'PDF not found or unauthorized'}), 404
+        
+        filepath, title = result
+        return send_file(filepath, download_name=f"{title}.pdf", as_attachment=True, mimetype='application/pdf')
+    except Exception as e:
+        app.logger.error(f"Download saved PDF error: {str(e)}")
         app.logger.error(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
 
