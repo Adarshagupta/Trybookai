@@ -81,11 +81,11 @@
     </style>
 </head>
 <body class="font-sans text-gray-800 min-h-screen flex flex-col gradient-bg">
-    <main class="flex flex-col md:flex-row h-screen p-4 md:p-8 gap-4">
-        <div class="w-full md:w-96 bg-white shadow-2xl p-6 md:p-8 flex flex-col rounded-3xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
-            <div class="flex justify-between items-center mb-6 md:mb-10">
-                <img src="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png" alt="BookAI Logo" width="50" height="50">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center">AI Book <span class="text-primary">Generator</span></h1>
+    <main class="flex flex-col lg:flex-row h-screen p-4 lg:p-8 gap-4">
+        <div class="w-full lg:w-96 bg-white shadow-2xl p-6 lg:p-8 flex flex-col rounded-3xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
+            <div class="flex justify-between items-center mb-6 lg:mb-10">
+                <img src="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png" alt="BookAI Logo" class="w-12 h-12">
+                <h1 class="text-2xl lg:text-4xl font-bold text-gray-800 text-center">AI Book <span class="text-primary">Generator</span></h1>
                 <button id="settings-button" class="text-gray-600 hover:text-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -93,7 +93,7 @@
                     </svg>
                 </button>
             </div>
-            <form id="book-form" class="space-y-4 md:space-y-6 flex-grow">
+            <form id="book-form" class="space-y-4 lg:space-y-6 flex-grow">
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
                     <select id="model" name="model" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
@@ -122,27 +122,27 @@
                     Generate Book
                 </button>
             </form>
-            <div id="progress" class="mt-4 md:mt-6 text-gray-600 text-center text-sm"></div>
-            <div id="error-message" class="mt-4 md:mt-6 p-4 bg-red-100 text-red-700 rounded-xl text-center font-medium text-sm hidden"></div>
+            <div id="progress" class="mt-4 lg:mt-6 text-gray-600 text-center text-sm"></div>
+            <div id="error-message" class="mt-4 lg:mt-6 p-4 bg-red-100 text-red-700 rounded-xl text-center font-medium text-sm hidden"></div>
         </div>
-        <div class="flex-1 flex flex-col bg-white rounded-3xl shadow-2xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect">
-            <div class="flex-1 overflow-auto p-4 md:p-8">
+        <div class="flex-1 flex flex-col bg-white rounded-3xl shadow-2xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect overflow-hidden">
+            <div class="flex-1 overflow-auto p-4 lg:p-8">
                 <div class="max-w-3xl mx-auto">
                     <div class="page-content space-y-6"></div>
                 </div>
             </div>
             <!-- Text-to-speech controls -->
             <div class="p-4 border-t border-gray-200">
-                <div class="flex justify-between items-center">
-                    <button id="play-pause" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300">
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                    <button id="play-pause" class="w-full sm:w-auto bg-primary text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300">
                         Play
                     </button>
                     <button id="download-pdf" class="fixed left-1/4 transform -translate-x-1/2 bg-primary text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
                         Download & Save Your Book
                     </button>
-                    <div class="flex items-center">
+                    <div class="flex items-center w-full sm:w-auto">
                         <label for="voice-select" class="mr-2 text-sm">Voice:</label>
-                        <select id="voice-select" class="p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <select id="voice-select" class="w-full sm:w-auto p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
                             <!-- Voice options will be populated by JavaScript -->
                         </select>
                     </div>
@@ -151,7 +151,7 @@
             <!-- Analytics Dashboard -->
             <div id="analytics-dashboard" class="p-4 border-t border-gray-200 hidden">
                 <h3 class="text-xl font-semibold mb-4">Analytics Dashboard</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-gray-100 p-4 rounded-lg">
                         <h4 class="font-medium mb-2">Word Count</h4>
                         <p id="word-count" class="text-2xl font-bold"></p>
@@ -207,16 +207,13 @@
     </div>
   
     <!-- Download buttons -->
-    <button id="download-pdf" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
-        Download & Save Your Book
-    </button>
     <button id="download-audio" class="fixed bottom-5 left-2/2 transform -translate-x-1/2 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hidden">
       Download Audio Book (Coming soon)
     </button>
   
     <!-- Settings Modal -->
     <div id="settings-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-full mx-4">
             <h2 class="text-2xl font-bold mb-4">Settings</h2>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
@@ -239,6 +236,18 @@
             <button id="close-settings" class="w-full bg-primary text-white py-2 rounded hover:bg-indigo-700 transition-colors duration-300">Close</button>
         </div>
     </div>
+
+    <div class="fixed bottom-4 left-0 right-0 flex justify-center space-x-4 px-4">
+        <button id="download-pdf" class="bg-secondary text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
+            Download & Save
+        </button>
+        <button id="download-audio" class="bg-secondary text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-600 transition transform hidden">
+            Download Audio (Soon)
+        </button>
+    </div>
+
+
+
   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
