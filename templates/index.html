@@ -6,6 +6,8 @@
     <title>AI Book Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -28,9 +30,7 @@
     <meta property="og:image" content="https://example.com/image.jpg">
     <meta property="og:url" content="https://example.com">
     <meta name="twitter:card" content="summary_large_image">
-    
     <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png">
-
     <style>
         @media (max-width: 640px) {
             .mobile-full-width {
@@ -97,9 +97,8 @@
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
                     <select id="model" name="model" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-                        <option value="gpt-4o-mini">GPT-4o Mini</option>
                         <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        <option value="gpt-4-turbo">gpt-4-turbo</option>
+                        <option value="gpt-4o-mini">GPT-4o Mini</option>
                         <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
                     </select>
                 </div>
@@ -240,263 +239,371 @@
   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-       $(document).ready(function() {
-    // Initialize EventSource for progress updates
-    var eventSource;
-
-    $('#book-form').submit(function(e) {
-        e.preventDefault();
-        showAdWall('generate');
-    });
-
-    function showAdWall(action) {
-        $('#ad-wall').removeClass('hidden');
-        var countdown = 5;
-        var adReason = "";
-
-        if ($('#model').val() === 'gpt-3.5-turbo') {
-            countdown = 30;
-            adReason = "You've selected GPT-3.5 Turbo, which requires a longer processing time.";
-        }
-
-        if (parseInt($('#word_count').val()) > 1000) {
-            countdown = 50;
-            adReason = "You've requested over 1000 words, which requires more processing time.";
-        }
-
-        $('#countdown').text(countdown);
-        $('#ad-reason').text(adReason);
-
-        var countdownInterval = setInterval(function() {
-            countdown--;
-            $('#countdown').text(countdown);
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                $('#close-ad').removeClass('hidden');
-            }
-        }, 1000);
-
-        $('#close-ad').off('click').on('click', function() {
-            $('#ad-wall').addClass('hidden');
-            if (action === 'generate') {
-                generateBook();
-            } else if (action === 'download') {
-                downloadPDF();
-            }
-        });
-    }
-
-    function generateBook() {
-        var formData = $('#book-form').serialize();
-        $('#progress').text('');
-        $('.page-content').empty();
-        $('.loading').show();
-        $('#download-pdf').hide();
-        $('#error-message').hide();
-        $('#analytics-dashboard').addClass('hidden');
-        
-        // Close existing EventSource if it exists
-        if (eventSource) {
-            eventSource.close();
-        }
-
-        // Create new EventSource for progress updates
-        eventSource = new EventSource('/progress');
-        eventSource.onmessage = function(event) {
-            if (event.data !== 'keep-alive') {
-                $('#progress').text('Words generated: ' + event.data);
-            }
-        };
-        
-        $.ajax({
-            url: '/generate',
-            method: 'POST',
-            data: formData,
-            success: function(response) {
-                $('.loading').hide();
-                $('.page-content').html(response.content);
-                $('#progress').text('Book generated! Word count: ' + response.word_count);
-                $('#download-pdf').show();
-                
-                // Apply current font size to new content
-                $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
-                
-                // Close EventSource after successful generation
-                eventSource.close();
-
-                // Calculate and display analytics
-                displayAnalytics(response.content);
-            },
-            error: function(xhr, status, error) {
-                $('.loading').hide();
-                $('#error-message').text('An error occurred while generating the book: ' + error).show();
-                
-                // Close EventSource on error
-                eventSource.close();
-            }
-        });
-    }
-
-    $('#download-pdf').click(function() {
-        showAdWall('download');
-    });
-
-    function downloadPDF() {
-        var content = $('.page-content').html();
-        var title = $('#topic').val();
-        var language = $('#language').val();
-        $('.loading').show();
-        $('#error-message').hide();
-        
-        $.ajax({
-            url: '/download-pdf',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({content: content, title: title, language: language}),
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function(blob) {
-                $('.loading').hide();
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = title + ".pdf";
-                link.click();
-            },
-            error: function(xhr, status, error) {
-                $('.loading').hide();
-                var errorMessage = 'An error occurred while generating the PDF.';
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage += ' Details: ' + xhr.responseJSON.error;
+        $(document).ready(function() {
+            var eventSource;
+            var razorpayOrderId;
+    
+            $('#book-form').submit(function(e) {
+                e.preventDefault();
+                const selectedModel = $('#model').val();
+                if (selectedModel === 'gpt-4-turbo' || selectedModel === 'gpt-4o') {
+                    initiatePayment();
+                } else {
+                    showAdWall('generate');
                 }
-                $('#error-message').text(errorMessage).show();
+            });
+    
+            function initiatePayment() {
+                $.ajax({
+                    url: '/create-razorpay-order',
+                    method: 'POST',
+                    data: { amount: 2000 }, // $20 in cents
+                    success: function(response) {
+                        razorpayOrderId = response.id;
+                        var options = {
+                            "key": "YOUR_RAZORPAY_KEY_ID", // Replace with your Razorpay Key ID
+                            "amount": "2000",
+                            "currency": "USD",
+                            "name": "AI Book Generator",
+                            "description": "GPT-4 Model Access",
+                            "order_id": razorpayOrderId,
+                            "handler": function (response){
+                                // Payment successful, proceed with book generation
+                                showAdWall('generate');
+                            },
+                            "prefill": {
+                                "name": "User Name",
+                                "email": "user@example.com"
+                            },
+                            "theme": {
+                                "color": "#3399cc"
+                            }
+                        };
+                        var rzp1 = new Razorpay(options);
+                        rzp1.open();
+                    },
+                    error: function(xhr, status, error) {
+                        $('#error-message').text('An error occurred while initiating payment: ' + error).show();
+                    }
+                });
             }
+    
+            function showAdWall(action) {
+                $('#ad-wall').removeClass('hidden');
+                var countdown = 5;
+                var adReason = "";
+    
+                if ($('#model').val() === 'gpt-3.5-turbo') {
+                    countdown = 30;
+                    adReason = "You've selected GPT-3.5 Turbo, which requires a longer processing time.";
+                }
+    
+                if (parseInt($('#word_count').val()) > 1000) {
+                    countdown = 50;
+                    adReason = "You've requested over 1000 words, which requires more processing time.";
+                }
+    
+                $('#countdown').text(countdown);
+                $('#ad-reason').text(adReason);
+    
+                var countdownInterval = setInterval(function() {
+                    countdown--;
+                    $('#countdown').text(countdown);
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        $('#close-ad').removeClass('hidden');
+                    }
+                }, 1000);
+    
+                $('#close-ad').off('click').on('click', function() {
+                    $('#ad-wall').addClass('hidden');
+                    if (action === 'generate') {
+                        generateBook();
+                    } else if (action === 'download') {
+                        downloadPDF();
+                    }
+                });
+            }
+    
+            function generateBook() {
+                var formData = $('#book-form').serialize();
+                $('#progress').text('');
+                $('.page-content').empty();
+                $('.loading').show();
+                $('#download-pdf').hide();
+                $('#error-message').hide();
+                $('#analytics-dashboard').addClass('hidden');
+                
+                if (eventSource) {
+                    eventSource.close();
+                }
+    
+                eventSource = new EventSource('/progress');
+                eventSource.onmessage = function(event) {
+                    if (event.data !== 'keep-alive') {
+                        $('#progress').text('Words generated: ' + event.data);
+                    }
+                };
+                
+                $.ajax({
+                    url: '/generate',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('.loading').hide();
+                        $('.page-content').html(response.content);
+                        $('#progress').text('Book generated! Word count: ' + response.word_count);
+                        $('#download-pdf').show();
+                        
+                        $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
+                        
+                        eventSource.close();
+    
+                        displayAnalytics(response.content);
+                    },
+                    error: function(xhr, status, error) {
+                        $('.loading').hide();
+                        $('#error-message').text('An error occurred while generating the book: ' + error).show();
+                        
+                        eventSource.close();
+                    }
+                });
+            }
+    
+            $('#download-pdf').click(function() {
+                showAdWall('download');
+            });
+    
+            function downloadPDF() {
+                var content = $('.page-content').html();
+                var title = $('#topic').val();
+                var language = $('#language').val();
+                $('.loading').show();
+                $('#error-message').hide();
+                
+                $.ajax({
+                    url: '/download-pdf',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({content: content, title: title, language: language}),
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function(blob) {
+                        $('.loading').hide();
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = title + ".pdf";
+                        link.click();
+                    },
+                    error: function(xhr, status, error) {
+                        $('.loading').hide();
+                        var errorMessage = 'An error occurred while generating the PDF.';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage += ' Details: ' + xhr.responseJSON.error;
+                        }
+                        $('#error-message').text(errorMessage).show();
+                    }
+                });
+            }
+    
+            // Text-to-speech functionality
+            let speechSynthesis = window.speechSynthesis;
+            let utterance = new SpeechSynthesisUtterance();
+            let isPlaying = false;
+    
+            function populateVoiceList() {
+                let voices = speechSynthesis.getVoices();
+                let voiceSelect = document.getElementById('voice-select');
+                voiceSelect.innerHTML = '';
+                voices.forEach((voice, i) => {
+                    let option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.setAttribute('data-lang', voice.lang);
+                    option.setAttribute('data-name', voice.name);
+                    voiceSelect.appendChild(option);
+                });
+            }
+    
+            populateVoiceList();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+            }
+    
+            document.getElementById('play-pause').addEventListener('click', function() {
+                let text = document.querySelector('.page-content').textContent;
+                if (!isPlaying) {
+                    utterance.text = text;
+                    let selectedVoice = document.getElementById('voice-select').selectedOptions[0].getAttribute('data-name');
+                    utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
+                    speechSynthesis.speak(utterance);
+                    this.textContent = 'Pause';
+                    isPlaying = true;
+                } else {
+                    speechSynthesis.pause();
+                    this.textContent = 'Resume';
+                    isPlaying = false;
+                }
+            });
+    
+            document.getElementById('voice-select').addEventListener('change', function() {
+                if (isPlaying) {
+                    speechSynthesis.cancel();
+                    let text = document.querySelector('.page-content').textContent;
+                    utterance = new SpeechSynthesisUtterance(text);
+                    let selectedVoice = this.selectedOptions[0].getAttribute('data-name');
+                    utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
+                    speechSynthesis.speak(utterance);
+                }
+            });
+    
+            utterance.onend = function() {
+                document.getElementById('play-pause').textContent = 'Play';
+                isPlaying = false;
+            };
+    
+            function displayAnalytics(content) {
+                const wordCount = content.split(/\s+/).length;
+                $('#word-count').text(wordCount);
+    
+                const sentences = content.split(/[.!?]+/);
+                const averageWordsPerSentence = wordCount / sentences.length;
+                const readabilityScore = Math.round(206.835 - 1.015 * averageWordsPerSentence);
+                $('#readability-score').text(readabilityScore + ' (Flesch-Kincaid)');
+    
+                const genres = ['Fiction', 'Non-fiction', 'Sci-fi', 'Romance', 'Mystery'];
+                const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+                $('#genre-classification').text(randomGenre);
+    
+                const sentiments = ['Positive', 'Neutral', 'Negative'];
+                const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
+                $('#sentiment-analysis').text(randomSentiment);
+    
+                $('#analytics-dashboard').removeClass('hidden');
+            }
+    
+            $('#settings-button').click(function() {
+                $('#settings-modal').removeClass('hidden');
+            });
+    
+            $('#close-settings').click(function() {
+                $('#settings-modal').addClass('hidden');
+            });
+    
+            $('#theme-select').change(function() {
+                if ($(this).val() === 'dark') {
+                    $('body').addClass('dark-theme');
+                } else {
+                    $('body').removeClass('dark-theme');
+                }
+            });
+    
+            $('#font-size-range').on('input', function() {
+                let fontSize = $(this).val();
+                $('.page-content').css('font-size', fontSize + 'px');
+                $('#font-size-value').text(fontSize + 'px');
+            });
+    
+            $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
+            $('#font-size-value').text($('#font-size-range').val() + 'px');
+    
+            $('#analytics-toggle').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#analytics-dashboard').removeClass('hidden');
+                } else {
+                    $('#analytics-dashboard').addClass('hidden');
+                }
+            });
         });
-    }
-
-    // Text-to-speech functionality
-    let speechSynthesis = window.speechSynthesis;
-    let utterance = new SpeechSynthesisUtterance();
-    let isPlaying = false;
-
-    // Populate voice options
-    function populateVoiceList() {
-        let voices = speechSynthesis.getVoices();
-        let voiceSelect = document.getElementById('voice-select');
-        voiceSelect.innerHTML = '';
-        voices.forEach((voice, i) => {
-            let option = document.createElement('option');
-            option.textContent = `${voice.name} (${voice.lang})`;
-            option.setAttribute('data-lang', voice.lang);
-            option.setAttribute('data-name', voice.name);
-            voiceSelect.appendChild(option);
-        });
-    }
-
-    populateVoiceList();
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-        speechSynthesis.onvoiceschanged = populateVoiceList;
-    }
-
-    // Play/Pause functionality
-    document.getElementById('play-pause').addEventListener('click', function() {
-        let text = document.querySelector('.page-content').textContent;
-        if (!isPlaying) {
-            utterance.text = text;
-            let selectedVoice = document.getElementById('voice-select').selectedOptions[0].getAttribute('data-name');
-            utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
-            speechSynthesis.speak(utterance);
-            this.textContent = 'Pause';
-            isPlaying = true;
-        } else {
-            speechSynthesis.pause();
-            this.textContent = 'Resume';
-            isPlaying = false;
+        // Add this function to the existing JavaScript code
+function savePDF() {
+    var content = $('.page-content').html();
+    var title = $('#topic').val();
+    var language = $('#language').val();
+    $('.loading').show();
+    $('#error-message').hide();
+    
+    $.ajax({
+        url: '/save-pdf',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({content: content, title: title, language: language}),
+        success: function(response) {
+            $('.loading').hide();
+            if (response.success) {
+                alert('PDF saved successfully!');
+            } else {
+                $('#error-message').text('Failed to save PDF: ' + response.error).show();
+            }
+        },
+        error: function(xhr, status, error) {
+            $('.loading').hide();
+            $('#error-message').text('An error occurred while saving the PDF: ' + error).show();
         }
     });
+}
 
-    // Update voice when selection changes
-    document.getElementById('voice-select').addEventListener('change', function() {
-        if (isPlaying) {
-            speechSynthesis.cancel();
-            let text = document.querySelector('.page-content').textContent;
-            utterance = new SpeechSynthesisUtterance(text);
-            let selectedVoice = this.selectedOptions[0].getAttribute('data-name');
-            utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === selectedVoice);
-            speechSynthesis.speak(utterance);
+// Modify the existing downloadPDF function
+function downloadPDF() {
+    var content = $('.page-content').html();
+    var title = $('#topic').val();
+    var language = $('#language').val();
+    $('.loading').show();
+    $('#error-message').hide();
+    
+    $.ajax({
+        url: '/download-pdf',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({content: content, title: title, language: language}),
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function(blob) {
+            $('.loading').hide();
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = title + ".pdf";
+            link.click();
+            
+            // After successful download, save the PDF
+            savePDF();
+        },
+        error: function(xhr, status, error) {
+            $('.loading').hide();
+            var errorMessage = 'An error occurred while generating the PDF.';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMessage += ' Details: ' + xhr.responseJSON.error;
+            }
+            $('#error-message').text(errorMessage).show();
         }
     });
+}
 
-    // Handle speech synthesis ending
-    utterance.onend = function() {
-        document.getElementById('play-pause').textContent = 'Play';
-        isPlaying = false;
-    };
+// Add a new button for viewing saved PDFs
+$('<button id="view-saved-pdfs" class="fixed bottom-5 right-5 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1">View Saved PDFs</button>').insertAfter('#download-pdf');
 
-    // Analytics Dashboard functionality
-    function displayAnalytics(content) {
-        // Word count
-        const wordCount = content.split(/\s+/).length;
-        $('#word-count').text(wordCount);
-
-        // Readability score (using a simple formula)
-        const sentences = content.split(/[.!?]+/);
-        const averageWordsPerSentence = wordCount / sentences.length;
-        const readabilityScore = Math.round(206.835 - 1.015 * averageWordsPerSentence);
-        $('#readability-score').text(readabilityScore + ' (Flesch-Kincaid)');
-
-        // Genre classification (simplified example)
-        const genres = ['Fiction', 'Non-fiction', 'Sci-fi', 'Romance', 'Mystery'];
-        const randomGenre = genres[Math.floor(Math.random() * genres.length)];
-        $('#genre-classification').text(randomGenre);
-
-        // Sentiment analysis (simplified example)
-        const sentiments = ['Positive', 'Neutral', 'Negative'];
-        const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
-        $('#sentiment-analysis').text(randomSentiment);
-
-        // Show the analytics dashboard
-        $('#analytics-dashboard').removeClass('hidden');
-    }
-
-    // Settings functionality
-    $('#settings-button').click(function() {
-        $('#settings-modal').removeClass('hidden');
-    });
-
-    $('#close-settings').click(function() {
-        $('#settings-modal').addClass('hidden');
-    });
-
-    // Theme toggle
-    $('#theme-select').change(function() {
-        if ($(this).val() === 'dark') {
-            $('body').addClass('dark-theme');
-        } else {
-            $('body').removeClass('dark-theme');
-        }
-    });
-
-    // Font size adjustment
-    $('#font-size-range').on('input', function() {
-        let fontSize = $(this).val();
-        $('.page-content').css('font-size', fontSize + 'px');
-        $('#font-size-value').text(fontSize + 'px');
-    });
-
-    // Apply initial font size
-    $('.page-content').css('font-size', $('#font-size-range').val() + 'px');
-    $('#font-size-value').text($('#font-size-range').val() + 'px');
-
-    // Analytics dashboard toggle
-    $('#analytics-toggle').change(function() {
-        if ($(this).is(':checked')) {
-            $('#analytics-dashboard').removeClass('hidden');
-        } else {
-            $('#analytics-dashboard').addClass('hidden');
+$('#view-saved-pdfs').click(function() {
+    $.ajax({
+        url: '/get-saved-pdfs',
+        method: 'GET',
+        success: function(response) {
+            if (response.pdfs && response.pdfs.length > 0) {
+                let pdfList = '<ul>';
+                response.pdfs.forEach(pdf => {
+                    pdfList += `<li><a href="/download-saved-pdf/${pdf.id}" target="_blank">${pdf.title}</a></li>`;
+                });
+                pdfList += '</ul>';
+                $('.page-content').html('<h2>Your Saved PDFs</h2>' + pdfList);
+            } else {
+                $('.page-content').html('<h2>Your Saved PDFs</h2><p>No saved PDFs found.</p>');
+            }
+        },
+        error: function(xhr, status, error) {
+            $('#error-message').text('An error occurred while fetching saved PDFs: ' + error).show();
         }
     });
 });
-  </script>
+        </script>
 </body>
 </html>
