@@ -219,30 +219,64 @@
     </button>
   
     <!-- Settings Modal -->
-    <div id="settings-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-full mx-4">
-            <h2 class="text-2xl font-bold mb-4">Settings</h2>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
-                <select id="theme-select" class="w-full p-2 border rounded">
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                </select>
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
-                <input type="range" id="font-size-range" min="12" max="24" value="16" class="w-full">
-                <span id="font-size-value" class="text-sm text-gray-500">16px</span>
-            </div>
-            <div class="mb-4">
-                <label class="flex items-center">
-                    <input type="checkbox" id="analytics-toggle" class="mr-2">
-                    <span class="text-sm font-medium text-gray-700">Enable Analytics Dashboard</span>
-                </label>
-            </div>
-            <button id="close-settings" class="w-full bg-primary text-white py-2 rounded hover:bg-indigo-700 transition-colors duration-300">Close</button>
+  <!-- Settings Modal -->
+<div id="settings-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-full mx-4 overflow-y-auto max-h-90vh">
+        <h2 class="text-2xl font-bold mb-4">Settings</h2>
+        
+        <!-- Existing settings -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+            <select id="theme-select" class="w-full p-2 border rounded">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
         </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
+            <input type="range" id="font-size-range" min="12" max="24" value="16" class="w-full">
+            <span id="font-size-value" class="text-sm text-gray-500">16px</span>
+        </div>
+        
+        <!-- New settings -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Text Alignment</label>
+            <select id="text-align-select" class="w-full p-2 border rounded">
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+                <option value="justify">Justify</option>
+            </select>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Line Spacing</label>
+            <input type="range" id="line-spacing-range" min="1" max="3" step="0.1" value="1.5" class="w-full">
+            <span id="line-spacing-value" class="text-sm text-gray-500">1.5</span>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Paragraph Indentation (em)</label>
+            <input type="range" id="indent-range" min="0" max="5" step="0.5" value="0" class="w-full">
+            <span id="indent-value" class="text-sm text-gray-500">0em</span>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
+            <input type="color" id="text-color-picker" value="#000000" class="w-full">
+        </div>
+        
+        <div class="mb-4">
+            <label class="flex items-center">
+                <input type="checkbox" id="analytics-toggle" class="mr-2">
+                <span class="text-sm font-medium text-gray-700">Enable Analytics Dashboard</span>
+            </label>
+        </div>
+        
+        <button id="close-settings" class="w-full bg-primary text-white py-2 rounded hover:bg-indigo-700 transition-colors duration-300">Close</button>
     </div>
+</div>
 
     <div class="fixed bottom-4 left-0 right-0 flex justify-center space-x-4 px-4">
         <button id="download-pdf" class="bg-secondary text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
@@ -603,6 +637,128 @@ function downloadPDF() {
     });
 }
 
+// Function to create a larger book cover
+// Function to create a larger book cover (unchanged)
+function createLargerBookCover(title) {
+    const bookCover = document.createElement('div');
+    bookCover.style.width = '140px';
+    bookCover.style.height = '180px';
+    bookCover.style.background = 'linear-gradient(45deg, #1a237e, #3949ab)';
+    bookCover.style.borderRadius = '5px';
+    bookCover.style.boxShadow = '0 8px 16px rgba(0,0,0,0.1)';
+    bookCover.style.display = 'flex';
+    bookCover.style.flexDirection = 'column';
+    bookCover.style.justifyContent = 'center';
+    bookCover.style.alignItems = 'center';
+    bookCover.style.padding = '10px';
+    bookCover.style.margin = '10px';
+
+    const titleElement = document.createElement('div');
+    titleElement.textContent = title;
+    titleElement.style.fontFamily = 'Arial, sans-serif';
+    titleElement.style.fontSize = '14px';
+    titleElement.style.color = '#ffffff';
+    titleElement.style.textAlign = 'center';
+    titleElement.style.wordWrap = 'break-word';
+    titleElement.style.maxWidth = '100%';
+
+    bookCover.appendChild(titleElement);
+    return bookCover;
+}
+
+// Function to create a download icon (unchanged)
+function createDownloadIcon() {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", "24");
+    svg.setAttribute("height", "24");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4");
+    svg.appendChild(path);
+
+    const polyline = document.createElementNS(svgNS, "polyline");
+    polyline.setAttribute("points", "7 10 12 15 17 10");
+    svg.appendChild(polyline);
+
+    const line = document.createElementNS(svgNS, "line");
+    line.setAttribute("x1", "12");
+    line.setAttribute("y1", "15");
+    line.setAttribute("x2", "12");
+    line.setAttribute("y2", "3");
+    svg.appendChild(line);
+
+    return svg;
+}
+
+// Updated function to show PDF in modal
+function showPDFModal(pdfUrl, title) {
+    // Create modal container
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.zIndex = '1000';
+    modal.style.left = '0';
+    modal.style.top = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0,0,0,0.4)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#fefefe';
+    modalContent.style.padding = '20px';
+    modalContent.style.border = '1px solid #888';
+    modalContent.style.width = '80%';
+    modalContent.style.height = '80%';
+    modalContent.style.display = 'flex';
+    modalContent.style.flexDirection = 'column';
+
+    // Create close button
+    const closeBtn = document.createElement('span');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.color = '#aaa';
+    closeBtn.style.float = 'right';
+    closeBtn.style.fontSize = '28px';
+    closeBtn.style.fontWeight = 'bold';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.onclick = function() {
+        document.body.removeChild(modal);
+    };
+
+    // Create iframe for PDF
+    const iframe = document.createElement('iframe');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+
+    // Fetch the PDF and create an object URL
+    fetch(pdfUrl)
+        .then(response => response.blob())
+        .then(blob => {
+            const objectUrl = URL.createObjectURL(blob);
+            iframe.src = objectUrl;
+        })
+        .catch(error => {
+            console.error('Error loading PDF:', error);
+            iframe.srcdoc = '<p>Error loading PDF. Please try again later.</p>';
+        });
+
+    // Append elements
+    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(iframe);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+}
+
 // Add a new button for viewing saved PDFs
 $('<button id="view-saved-pdfs" class="fixed top-10 right-10 bg-primary text-white px-5 py-3 rounded-full shadow-lg hover:bg-indigo-600 transition transform hover:-translate-y-1">View Saved PDFs</button>').insertAfter('#download-pdf');
 
@@ -612,12 +768,24 @@ $('#view-saved-pdfs').click(function() {
         method: 'GET',
         success: function(response) {
             if (response.pdfs && response.pdfs.length > 0) {
-                let pdfList = '<ul>';
+                let pdfGrid = '<div style="display: flex; flex-wrap: wrap; justify-content: flex-start;">';
                 response.pdfs.forEach(pdf => {
-                    pdfList += `<li><a href="/download-saved-pdf/${pdf.id}" target="_blank">${pdf.title}</a></li>`;
+                    const bookCover = createLargerBookCover(pdf.title);
+                    const downloadIcon = createDownloadIcon();
+                    const domain = window.location.origin; // Get the current domain
+                    const pdfUrl = `${domain}/download-saved-pdf/${pdf.id}`;
+                    pdfGrid += `
+                        <div style="display: flex; flex-direction: column; align-items: center; margin: 10px; width: 140px;">
+                            ${bookCover.outerHTML}
+                            <div style="display: flex; align-items: center; justify-content: center; margin-top: 5px; width: 100%;">
+                                <button onclick="showPDFModal('${pdfUrl}', '${pdf.title}')" style="margin-right: 5px; padding: 2px 5px; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer;">View</button>
+                                <a href="${pdfUrl}" download title="Download ${pdf.title}">${downloadIcon.outerHTML}</a>
+                            </div>
+                            <div style="text-align: center; overflow-wrap: break-word; margin-top: 5px;">${pdf.title}</div>
+                        </div>`;
                 });
-                pdfList += '</ul>';
-                $('.page-content').html('<h2>Your Saved PDFs (Click to Download)</h2>' + pdfList);
+                pdfGrid += '</div>';
+                $('.page-content').html('<h2>Your Saved PDFs</h2>' + pdfGrid);
             } else {
                 $('.page-content').html('<h2>Your Saved PDFs</h2><p>No saved PDFs found.</p>');
             }
@@ -626,7 +794,8 @@ $('#view-saved-pdfs').click(function() {
             $('#error-message').text('An error occurred while fetching saved PDFs: ' + error).show();
         }
     });
-});// Dinosaur game
+});
+// Dinosaur game
 // Dinosaur game
 let canvas, ctx, dinoY, dinoVelocity, gravity, cactusX, gameLoop, score, gameOver;
 
@@ -725,6 +894,73 @@ function hideGame() {
         clearInterval(gameLoop);
     }
 }
+  // New settings handlers
+  $('#text-align-select').change(function() {
+        $('.page-content').css('text-align', $(this).val());
+    });
+
+    $('#line-spacing-range').on('input', function() {
+        let lineSpacing = $(this).val();
+        $('.page-content').css('line-height', lineSpacing);
+        $('#line-spacing-value').text(lineSpacing);
+    });
+
+    $('#indent-range').on('input', function() {
+        let indentValue = $(this).val();
+        $('.page-content p').css('text-indent', indentValue + 'em');
+        $('#indent-value').text(indentValue + 'em');
+    });
+
+    $('#text-color-picker').change(function() {
+        $('.page-content').css('color', $(this).val());
+    });
+
+    // Function to apply all settings
+    function applySettings() {
+        // Apply theme
+        if ($('#theme-select').val() === 'dark') {
+            $('body').addClass('dark-theme');
+        } else {
+            $('body').removeClass('dark-theme');
+        }
+
+        // Apply font size
+        let fontSize = $('#font-size-range').val();
+        $('.page-content').css('font-size', fontSize + 'px');
+        $('#font-size-value').text(fontSize + 'px');
+
+        // Apply text alignment
+        $('.page-content').css('text-align', $('#text-align-select').val());
+
+        // Apply line spacing
+        let lineSpacing = $('#line-spacing-range').val();
+        $('.page-content').css('line-height', lineSpacing);
+        $('#line-spacing-value').text(lineSpacing);
+
+        // Apply paragraph indentation
+        let indentValue = $('#indent-range').val();
+        $('.page-content p').css('text-indent', indentValue + 'em');
+        $('#indent-value').text(indentValue + 'em');
+
+        // Apply text color
+        $('.page-content').css('color', $('#text-color-picker').val());
+
+        // Apply analytics dashboard visibility
+        if ($('#analytics-toggle').is(':checked')) {
+            $('#analytics-dashboard').removeClass('hidden');
+        } else {
+            $('#analytics-dashboard').addClass('hidden');
+        }
+    }
+
+    // Apply settings when closing the modal
+    $('#close-settings').click(function() {
+        applySettings();
+        $('#settings-modal').addClass('hidden');
+    });
+
+    // Initial application of settings
+    applySettings();
 
         </script>
 </body>
