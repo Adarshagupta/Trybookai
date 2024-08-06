@@ -97,10 +97,8 @@
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
                     <select id="model" name="model" required class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-                        <option value="gpt-4o-mini">GPT-4o Mini</option>
                         <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        <option value="gpt-4-turbo">GPT 4 Turbo</option>
-
+                        <option value="gpt-4o-mini">GPT-4o Mini</option>
                         <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
                     </select>
                 </div>
@@ -583,7 +581,7 @@ function downloadPDF() {
 }
 
 // Add a new button for viewing saved PDFs
-$('<button id="view-saved-pdfs" class="fixed bottom-5 right-5 bg-secondary text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1">View Saved PDFs</button>').insertAfter('#download-pdf');
+$('<button id="view-saved-pdfs" class="fixed top-10 right-10 bg-primary text-white px-5 py-3 rounded-full shadow-lg hover:bg-indigo-600 transition transform hover:-translate-y-1">View Saved PDFs</button>').insertAfter('#download-pdf');
 
 $('#view-saved-pdfs').click(function() {
     $.ajax({
@@ -596,7 +594,7 @@ $('#view-saved-pdfs').click(function() {
                     pdfList += `<li><a href="/download-saved-pdf/${pdf.id}" target="_blank">${pdf.title}</a></li>`;
                 });
                 pdfList += '</ul>';
-                $('.page-content').html('<h2>Your Saved PDFs</h2>' + pdfList);
+                $('.page-content').html('<h2>Your Saved PDFs (Click to Download)</h2>' + pdfList);
             } else {
                 $('.page-content').html('<h2>Your Saved PDFs</h2><p>No saved PDFs found.</p>');
             }
