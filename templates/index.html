@@ -638,11 +638,11 @@ function downloadPDF() {
 }
 
 // Function to create a larger book cover
-// Function to create a larger book cover (unchanged)
+// Function to create a larger book cover
 function createLargerBookCover(title) {
     const bookCover = document.createElement('div');
-    bookCover.style.width = '140px';
-    bookCover.style.height = '180px';
+    bookCover.style.width = '120px';
+    bookCover.style.height = '160px';
     bookCover.style.background = 'linear-gradient(45deg, #1a237e, #3949ab)';
     bookCover.style.borderRadius = '5px';
     bookCover.style.boxShadow = '0 8px 16px rgba(0,0,0,0.1)';
@@ -666,7 +666,7 @@ function createLargerBookCover(title) {
     return bookCover;
 }
 
-// Function to create a download icon (unchanged)
+// Function to create a download icon
 function createDownloadIcon() {
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
@@ -697,9 +697,8 @@ function createDownloadIcon() {
     return svg;
 }
 
-// Updated function to show PDF in modal
+// Function to show PDF in modal
 function showPDFModal(pdfUrl, title) {
-    // Create modal container
     const modal = document.createElement('div');
     modal.style.position = 'fixed';
     modal.style.zIndex = '1000';
@@ -712,7 +711,6 @@ function showPDFModal(pdfUrl, title) {
     modal.style.justifyContent = 'center';
     modal.style.alignItems = 'center';
 
-    // Create modal content
     const modalContent = document.createElement('div');
     modalContent.style.backgroundColor = '#fefefe';
     modalContent.style.padding = '20px';
@@ -722,7 +720,6 @@ function showPDFModal(pdfUrl, title) {
     modalContent.style.display = 'flex';
     modalContent.style.flexDirection = 'column';
 
-    // Create close button
     const closeBtn = document.createElement('span');
     closeBtn.innerHTML = '&times;';
     closeBtn.style.color = '#aaa';
@@ -734,13 +731,11 @@ function showPDFModal(pdfUrl, title) {
         document.body.removeChild(modal);
     };
 
-    // Create iframe for PDF
     const iframe = document.createElement('iframe');
     iframe.style.width = '100%';
     iframe.style.height = '100%';
     iframe.style.border = 'none';
 
-    // Fetch the PDF and create an object URL
     fetch(pdfUrl)
         .then(response => response.blob())
         .then(blob => {
@@ -752,11 +747,32 @@ function showPDFModal(pdfUrl, title) {
             iframe.srcdoc = '<p>Error loading PDF. Please try again later.</p>';
         });
 
-    // Append elements
     modalContent.appendChild(closeBtn);
     modalContent.appendChild(iframe);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
+}
+
+// Function to create a "Go Back" button
+function createGoBackButton() {
+    const button = document.createElement('button');
+    button.textContent = '← Go Back';
+    button.style.position = 'fixed';
+    button.style.top = '20px';
+    button.style.left = '20px';
+    button.style.padding = '10px 15px';
+    button.style.backgroundColor = '#4CAF50';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.borderRadius = '5px';
+    button.style.cursor = 'pointer';
+    button.style.zIndex = '1001';
+    button.onclick = function() {
+        $('.page-content').empty();
+        document.body.removeChild(button);
+        $('#original-content').show();
+    };
+    return button;
 }
 
 // Add a new button for viewing saved PDFs
@@ -767,12 +783,14 @@ $('#view-saved-pdfs').click(function() {
         url: '/get-saved-pdfs',
         method: 'GET',
         success: function(response) {
+            $('#original-content').hide();
+            
             if (response.pdfs && response.pdfs.length > 0) {
                 let pdfGrid = '<div style="display: flex; flex-wrap: wrap; justify-content: flex-start;">';
                 response.pdfs.forEach(pdf => {
                     const bookCover = createLargerBookCover(pdf.title);
                     const downloadIcon = createDownloadIcon();
-                    const domain = window.location.origin; // Get the current domain
+                    const domain = window.location.origin;
                     const pdfUrl = `${domain}/download-saved-pdf/${pdf.id}`;
                     pdfGrid += `
                         <div style="display: flex; flex-direction: column; align-items: center; margin: 10px; width: 140px;">
@@ -789,6 +807,8 @@ $('#view-saved-pdfs').click(function() {
             } else {
                 $('.page-content').html('<h2>Your Saved PDFs</h2><p>No saved PDFs found.</p>');
             }
+            
+            document.body.appendChild(createGoBackButton());
         },
         error: function(xhr, status, error) {
             $('#error-message').text('An error occurred while fetching saved PDFs: ' + error).show();
