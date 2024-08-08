@@ -18,7 +18,7 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Expose the port the app runs on
-EXPOSE 5000
+EXPOSE 5151
 
 # Debug: List files in the working directory
 RUN ls -la /app
@@ -26,5 +26,5 @@ RUN ls -la /app
 # Debug: Print FLASK_APP variable
 RUN echo $FLASK_APP
 
-# Run the Flask app
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+# Run the application using Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:5151", "--worker-class", "aiohttp.GunicornWebWorker", "app:app"]
