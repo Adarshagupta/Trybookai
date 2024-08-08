@@ -35,6 +35,18 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png">
     <style>
+        @keyframes writing {
+    0% { width: 0; }
+    100% { width: 100%; }
+}
+
+.writing-animation {
+    display: inline-block;
+    overflow: hidden;
+    border-right: 2px solid #000;
+    white-space: nowrap;
+    animation: writing 3s steps(40, end) infinite;
+}
         @media (max-width: 640px) {
             .mobile-full-width {
                 width: 100%;
@@ -84,6 +96,14 @@
         body.dark-theme .bg-gray-100 {
             background-color: #3a3a3a;
         }
+        @media (max-width: 640px) {
+    #chat-modal {
+        width: 90%;
+        height: 80%;
+        bottom: 10%;
+        right: 5%;
+    }
+}
     </style>
 </head>
 
@@ -162,7 +182,19 @@
             class="flex-1 flex flex-col bg-white rounded-3xl shadow-2xl transition-all duration-300 hover:shadow-3xl mobile-full-width glass-effect overflow-hidden">
             <div class="flex-1 overflow-auto p-4 lg:p-8">
                 <div class="max-w-3xl mx-auto">
-                    <div class="page-content space-y-6"></div>
+                    <div class="page-content space-y-6">
+                        <div id="chat-loading" class="hidden">
+                            <div class="animate-pulse flex space-x-4">
+                                <div class="flex-1 space-y-4 py-1">
+                                    <div class="h-4 bg-gray-400 rounded w-3/4"></div>
+                                    <div class="space-y-2">
+                                        <div class="h-4 bg-gray-400 rounded"></div>
+                                        <div class="h-4 bg-gray-400 rounded w-5/6"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- Text-to-speech controls -->
@@ -192,6 +224,7 @@
                     <div class="bg-gray-100 p-4 rounded-lg">
                         <h4 class="font-medium mb-2">Word Count</h4>
                         <p id="word-count" class="text-2xl font-bold"></p>
+                        <div id="word-count-display" class="text-sm text-gray-600 mt-2"></div>
                     </div>
                     <div class="bg-gray-100 p-4 rounded-lg">
                         <h4 class="font-medium mb-2">Readability Score</h4>
@@ -388,6 +421,7 @@
                     method: 'POST',
                     data: { amount: 2000 }, // $20 in cents
                     success: function (response) {
+                        $('#word-count-display').text(`Word count: ${response.word_count}`);
                         razorpayOrderId = response.id;
                         var options = {
                             "key": "YOUR_RAZORPAY_KEY_ID", // Replace with your Razorpay Key ID
@@ -411,6 +445,7 @@
                         var rzp1 = new Razorpay(options);
                         rzp1.open();
                     },
+                    
                     error: function (xhr, status, error) {
                         $('#error-message').text('An error occurred while initiating payment: ' + error).show();
                     }
@@ -456,7 +491,7 @@
 
             function generateBook() {
                 var formData = $('#book-form').serialize();
-                $('#progress').text('');
+                $('#progress').html(`<span class="writing-animation">Generating your book...</span>`);
                 $('.page-content').empty();
                 $('.loading').show();
                 $('#download-pdf').hide();
@@ -495,9 +530,8 @@
                     },
                     error: function (xhr, status, error) {
                         $('.loading').hide();
-                        hideGame(); // Hide the game if there's an error
+                        hideGame();
                         $('#error-message').text('An error occurred while generating the book: ' + error).show();
-
                         eventSource.close();
                     }
                 });
@@ -623,13 +657,11 @@
                 $('#settings-modal').addClass('hidden');
             });
 
-            $('#theme-select').change(function () {
-                if ($(this).val() === 'dark') {
-                    $('body').addClass('dark-theme');
-                } else {
-                    $('body').removeClass('dark-theme');
-                }
-            });
+            if ($('#theme-select').val() === 'dark') {
+                $('body').addClass('dark-theme');
+            } else {
+                $('body').removeClass('dark-theme');
+            }
 
             $('#font-size-range').on('input', function () {
                 let fontSize = $(this).val();
@@ -1084,12 +1116,12 @@
                     sendMessage();
                 }
             });
-
             function sendMessage() {
                 const message = chatInput.value.trim();
                 if (message) {
                     addMessageToChat('user', message);
                     chatInput.value = '';
+                    $('#chat-loading').removeClass('hidden');
                     // Send message to server and get response
                     fetch('/api/chat', {
                         method: 'POST',
@@ -1100,9 +1132,11 @@
                     })
                         .then(response => response.json())
                         .then(data => {
+                            $('#chat-loading').addClass('hidden');
                             addMessageToChat('assistant', data.message);
                         })
                         .catch(error => {
+                            $('#chat-loading').addClass('hidden');
                             console.error('Error:', error);
                             addMessageToChat('assistant', 'Sorry, there was an error processing your request.');
                         });
@@ -1257,6 +1291,33 @@
                 function () { $(this).css('opacity', '1'); }
             );
         });
+        function saveSettings() {
+    const settings = {
+        theme: $('#theme-select').val(),
+        fontSize: $('#font-size-range').val(),
+        textAlign: $('#text-align-select').val(),
+        lineSpacing: $('#line-spacing-range').val(),
+        indent: $('#indent-range').val(),
+        textColor: $('#text-color-picker').val(),
+        analyticsEnabled: $('#analytics-toggle').is(':checked')
+    };
+    localStorage.setItem('userSettings', JSON.stringify(settings));
+}
+
+function loadSettings() {
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        $('#theme-select').val(settings.theme);
+        $('#font-size-range').val(settings.fontSize);
+        $('#text-align-select').val(settings.textAlign);
+        $('#line-spacing-range').val(settings.lineSpacing);
+        $('#indent-range').val(settings.indent);
+        $('#text-color-picker').val(settings.textColor);
+        $('#analytics-toggle').prop('checked', settings.analyticsEnabled);
+        applySettings();
+    }
+}
     </script>
 </body>
 
