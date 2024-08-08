@@ -13,7 +13,8 @@ import io
 import asyncio
 import aiohttp
 from queue import Queue
-import sqlite3
+import psycopg2
+from psycopg2.extras import execute_values
 from datetime import datetime
 
 load_dotenv()  # Load environment variables from .env file
@@ -26,16 +27,24 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY:
     raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
 
-# Initialize SQLite database
+# Initialize PostgreSQL database
 def init_db():
-    conn = sqlite3.connect('pdfs.db')
+    conn = psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD")
+    )
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS pdfs
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  ip TEXT,
-                  title TEXT,
-                  filepath TEXT,
-                  timestamp TEXT)''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS pdfs (
+            id SERIAL PRIMARY KEY,
+            ip TEXT,
+            title TEXT,
+            filepath TEXT,
+            timestamp TIMESTAMP
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -172,37 +181,6 @@ def progress():
     
     return Response(generate(), mimetype='text/event-stream')
 
-@app.route('/download-pdf', methods=['POST'])
-def download_pdf():
-    try:
-        content = request.json['content']
-        title = request.json['title']
-        language = request.json['language']
-        pdf_buffer = create_pdf(content, title, language)
-        
-        # Save the PDF
-        ip = request.remote_addr
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{ip}_{timestamp}.pdf"
-        filepath = os.path.join('saved_pdfs', filename)
-        os.makedirs('saved_pdfs', exist_ok=True)
-        with open(filepath, 'wb') as f:
-            f.write(pdf_buffer.getvalue())
-        
-        # Save metadata to database
-        conn = sqlite3.connect('pdfs.db')
-        c = conn.cursor()
-        c.execute("INSERT INTO pdfs (ip, title, filepath, timestamp) VALUES (?, ?, ?, ?)",
-                  (ip, title, filepath, timestamp))
-        conn.commit()
-        conn.close()
-        
-        return send_file(io.BytesIO(pdf_buffer.getvalue()), download_name=f"{title}.pdf", as_attachment=True, mimetype='application/pdf')
-    except Exception as e:
-        app.logger.error(f"PDF download error: {str(e)}")
-        app.logger.error(traceback.format_exc())
-        return jsonify({'error': str(e)}), 500
-
 @app.route('/save-pdf', methods=['POST'])
 def save_pdf():
     try:
@@ -210,22 +188,29 @@ def save_pdf():
         title = request.json['title']
         language = request.json['language']
         ip = request.remote_addr
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now()
         
         pdf_buffer = create_pdf(content, title, language)
         
         # Save PDF to file
-        filename = f"{ip}_{timestamp}.pdf"
+        filename = f"{ip}_{timestamp.strftime('%Y%m%d_%H%M%S')}.pdf"
         filepath = os.path.join('saved_pdfs', filename)
         os.makedirs('saved_pdfs', exist_ok=True)
         with open(filepath, 'wb') as f:
             f.write(pdf_buffer.getvalue())
         
-        # Save metadata to database
-        conn = sqlite3.connect('pdfs.db')
+        # Save metadata to PostgreSQL database
+        conn = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD")
+        )
         c = conn.cursor()
-        c.execute("INSERT INTO pdfs (ip, title, filepath, timestamp) VALUES (?, ?, ?, ?)",
-                  (ip, title, filepath, timestamp))
+        c.execute(
+            "INSERT INTO pdfs (ip, title, filepath, timestamp) VALUES (%s, %s, %s, %s)",
+            (ip, title, filepath, timestamp)
+        )
         conn.commit()
         conn.close()
         
@@ -235,28 +220,18 @@ def save_pdf():
         app.logger.error(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
 
-@app.route('/get-saved-pdfs', methods=['GET'])
-def get_saved_pdfs():
-    try:
-        ip = request.remote_addr
-        conn = sqlite3.connect('pdfs.db')
-        c = conn.cursor()
-        c.execute("SELECT id, title, timestamp FROM pdfs WHERE ip = ? ORDER BY timestamp DESC", (ip,))
-        pdfs = [{'id': row[0], 'title': row[1], 'timestamp': row[2]} for row in c.fetchall()]
-        conn.close()
-        return jsonify({'pdfs': pdfs})
-    except Exception as e:
-        app.logger.error(f"Get saved PDFs error: {str(e)}")
-        app.logger.error(traceback.format_exc())
-        return jsonify({'error': str(e)}), 500
-
 @app.route('/download-saved-pdf/<int:pdf_id>', methods=['GET'])
 def download_saved_pdf(pdf_id):
     try:
         ip = request.remote_addr
-        conn = sqlite3.connect('pdfs.db')
+        conn = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD")
+        )
         c = conn.cursor()
-        c.execute("SELECT filepath, title FROM pdfs WHERE id = ? AND ip = ?", (pdf_id, ip))
+        c.execute("SELECT filepath, title FROM pdfs WHERE id = %s AND ip = %s", (pdf_id, ip))
         result = c.fetchone()
         conn.close()
         
