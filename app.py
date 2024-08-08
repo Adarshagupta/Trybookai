@@ -134,7 +134,7 @@ def playground():
 
 @app.route('/generate', methods=['POST'])
 @limiter.limit("5 per minute")
-async def generate_book():
+def generate_book():
     model = request.form['model']
     topic = request.form['topic']
     language = request.form['language']
@@ -163,7 +163,10 @@ async def generate_book():
         formatted_book = "\n\n".join(book_content)
         yield f"data: {formatted_book}\n\n"
 
-    return Response(stream_with_context(generate()), mimetype='text/event-stream')
+    def generate_wrapper():
+        return asyncio.run(generate())
+
+    return Response(stream_with_context(generate_wrapper()), mimetype='text/event-stream')
 
 @app.route('/download-pdf', methods=['POST'])
 @limiter.limit("10 per minute")
