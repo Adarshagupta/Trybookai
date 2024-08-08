@@ -166,12 +166,16 @@ def generate_book():
     def generate_wrapper():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
+        gen = generate()
         try:
-            for item in loop.run_until_complete(generate().__aiter__().__anext__()):
-                yield item
-        except StopAsyncIteration:
-            pass
+            while True:
+                try:
+                    item = loop.run_until_complete(gen.__anext__())
+                    yield item
+                except StopAsyncIteration:
+                    break
         finally:
+            loop.run_until_complete(gen.aclose())
             loop.close()
 
     return Response(stream_with_context(generate_wrapper()), mimetype='text/event-stream')
