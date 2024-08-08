@@ -164,7 +164,15 @@ def generate_book():
         yield f"data: {formatted_book}\n\n"
 
     def generate_wrapper():
-        return asyncio.run(generate())
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            for item in loop.run_until_complete(generate().__aiter__().__anext__()):
+                yield item
+        except StopAsyncIteration:
+            pass
+        finally:
+            loop.close()
 
     return Response(stream_with_context(generate_wrapper()), mimetype='text/event-stream')
 
