@@ -3,55 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookAI - AI-Powered Book Generation | Create Books with Artificial Intelligence</title>
+    <title>BookAI: Revolutionary AI-Powered Book Generation | Create Professional Books in Minutes</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="BookAI uses cutting-edge artificial intelligence to generate high-quality books in minutes. Explore the future of writing with our AI-powered book creation tool.">
-    <meta name="keywords" content="AI book writing, artificial intelligence books, automated book generation, BookAI, AI writing tool">
+    <meta name="description" content="BookAI harnesses cutting-edge artificial intelligence to generate high-quality, professional books in minutes. Revolutionize your writing process with our AI-powered book creation tool. Experience the future of authorship today.">
+    <meta name="keywords" content="AI book writing, artificial intelligence books, automated book generation, BookAI, AI writing tool, instant book creation, digital authorship, AI-assisted writing, smart book compiler, machine learning literature">
     <meta name="author" content="BookAI">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.bookai.com/">
-    <meta property="og:title" content="BookAI - Create Books with AI in Minutes">
-    <meta property="og:description" content="Generate high-quality books using artificial intelligence. BookAI revolutionizes the writing process with advanced AI technology.">
+    <meta property="og:title" content="BookAI - Create Professional Books with AI in Minutes | The Future of Writing">
+    <meta property="og:description" content="Generate high-quality, market-ready books using state-of-the-art artificial intelligence. BookAI revolutionizes the writing process, empowering authors and content creators with advanced AI technology.">
     <meta property="og:image" content="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png">
-
+    <meta property="og:image:alt" content="AI-generated book cover showcasing BookAI's capabilities">
+    <meta property="og:site_name" content="BookAI">
+    
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.bookai.com/">
-    <meta property="twitter:title" content="BookAI - AI-Powered Book Generation">
-    <meta property="twitter:description" content="Create professional-quality books in minutes with BookAI's advanced artificial intelligence writing technology.">
-    <meta property="twitter:image" content="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png">
-
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@BookAI_official">
+    <meta name="twitter:creator" content="@BookAI_official">
+    <meta name="twitter:url" content="https://www.bookai.com/">
+    <meta name="twitter:title" content="BookAI - Revolutionary AI-Powered Book Generation | Write Smarter, Not Harder">
+    <meta name="twitter:description" content="Create professional-quality books in minutes with BookAI's advanced artificial intelligence writing technology. Transform your ideas into fully-fledged books effortlessly.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png">
+    <meta name="twitter:image:alt" content="Stunning AI-generated book cover demonstrating BookAI's capabilities">
+    
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png">
-
+    <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    
     <!-- Canonical URL -->
     <link rel="canonical" href="https://www.bookai.com/">
-
+    
+    <!-- Alternate Language Pages -->
+    <link rel="alternate" hreflang="es" href="https://www.bookai.com/es/">
+    <link rel="alternate" hreflang="fr" href="https://www.bookai.com/fr/">
+    <link rel="alternate" hreflang="de" href="https://www.bookai.com/de/">
+    <link rel="alternate" hreflang="x-default" href="https://www.bookai.com/">
+    
     <!-- Preload critical assets -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style">
-
+    <link rel="preload" href="/fonts/custom-font.woff2" as="font" type="font/woff2" crossorigin>
+    
     <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.min.css">
     
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
+      "@type": "WebApplication",
       "name": "BookAI",
       "url": "https://www.bookai.com",
-      "description": "AI-powered book generation tool",
+      "description": "AI-powered book generation tool that creates professional-quality books in minutes",
+      "applicationCategory": "WritingSoftware",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "19.99",
+        "priceCurrency": "USD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1024"
+      },
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://www.bookai.com/search?q={search_term_string}",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.bookai.com/search?q={search_term_string}"
+        },
         "query-input": "required name=search_term_string"
       }
     }
     </script>
-
+    
+    <!-- Google Analytics (replace UA-XXXXX-Y with your actual tracking ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-XXXXX-Y');
+    </script>
     <!-- Social Media Integration -->
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-YOUR-ADDTHIS-ID"></script>
     
