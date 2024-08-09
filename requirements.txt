@@ -6,4 +6,4 @@ aiohttp
 PyGithub==1.55
 python-dotenv
 flask[async]
-psycopg2
+
