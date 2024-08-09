@@ -1,7 +1,17 @@
-AI Book Generator Documentation
-===============================
+# BookAI: AI-Powered Book Generation
 
-The AI Book Generator is a web application that allows users to generate books on any topic using artificial intelligence. It leverages OpenAI's language models to create coherent and engaging book content based on user input.
+BookAI is a revolutionary web application that harnesses the power of artificial intelligence to generate high-quality, professional books in minutes. Our cutting-edge AI technology empowers authors, content creators, and businesses to streamline their writing process and produce market-ready books with unprecedented speed and efficiency.
+
+![BookAI](https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png)
+
+\[!\[GitHub license\](https://img.shields.io/github/license/Adarshagupta/BookAI.svg)\](https://github.com/Adarshagupta/BookAI/blob/main/LICENSE)
+
+\[!\[GitHub release\](https://img.shields.io/github/release/Adarshagupta/BookAI.svg)\](https://github.com/Adarshagupta/BookAI/releases/)
+
+\[!\[GitHub stars\](https://img.shields.io/github/stars/Adarshagupta/BookAI.svg)\](https://github.com/Adarshagupta/BookAI/stargazers)
+
+\[!\[GitHub issues\](https://img.shields.io/github/issues/Adarshagupta/BookAI.svg)\](https://github.com/Adarshagupta/BookAI/issues/)
+
 
 Features
 --------
