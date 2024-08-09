@@ -32,7 +32,7 @@
                       <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
                       <input type="number" id="word_count" name="word_count" value="10000" required class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition">
                   </div>
-                  <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-blue-600 transition font-medium">Generate Book</button>
+                  <button type="submit" class="w-full bg-indigo-950	 text-white py-3 rounded-md hover:bg-blue-600 transition font-medium">Generate Book</button>
               </form>
         <div id="progress" class="mt-4 text-secondary text-center"></div>
         <div id="error-message" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md text-center font-medium hidden"></div>

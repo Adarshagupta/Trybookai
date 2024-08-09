@@ -43,7 +43,8 @@
         }
 
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to right, indigo, rgb(30, 30, 88));
+            ;
         }
 
         .glass-effect {
@@ -87,7 +88,7 @@
     </style>
 </head>
 
-<body class="font-sans text-gray-800 min-h-screen flex flex-col gradient-bg">
+<body class="font-sans container text-gray-800 min-h-screen flex flex-col gradient-bg">
     <main class="flex flex-col lg:flex-row h-screen p-4 lg:p-8 gap-4">
 
         <div
@@ -149,7 +150,7 @@
                 </div>
 
                 <button type="submit" id="generate-book"
-                    class="w-full bg-primary text-white py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
+                    class="w-full bg-indigo-950	 text-white py-3 rounded-xl hover:bg-indigo-950	-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
                     Generate Book
                 </button>
             </form>
@@ -169,11 +170,11 @@
             <div class="p-4 border-t border-gray-200">
                 <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
                     <button id="play-pause"
-                        class="w-full sm:w-auto bg-primary text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300">
+                        class="w-full sm:w-auto bg-indigo-950	 text-white px-4 py-2 rounded-full hover:bg-indigo-950	-700 transition-colors duration-300">
                         Play
                     </button>
                     <button id="download-pdf"
-                        class="fixed left-1/4 transform -translate-x-1/2 bg-primary text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
+                        class="fixed left-1/4 transform -translate-x-1/2 bg-indigo-950	 text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-600 transition transform hover:-translate-y-1 hidden">
                         Download & Save Your Book
                     </button>
                     <div class="flex items-center w-full sm:w-auto">
@@ -227,7 +228,7 @@
             <div class="bg-white p-6 rounded-lg shadow-xl">
                 <h3 class="text-xl font-bold mb-4">While we generate your book, enjoy this game!</h3>
                 <canvas id="gameCanvas" width="600" height="150" style="border:1px solid #000000;"></canvas>
-                <button id="restartGame" class="mt-4 bg-primary text-white px-4 py-2 rounded-full hidden">Restart
+                <button id="restartGame" class="mt-4 bg-indigo-950	 text-white px-4 py-2 rounded-full hidden">Restart
                     Game</button>
                 <p class="mt-2 text-sm text-gray-600">Press spacebar to jump</p>
             </div>
@@ -325,7 +326,7 @@
             </div>
 
             <button id="close-settings"
-                class="w-full bg-primary text-white py-2 rounded hover:bg-indigo-700 transition-colors duration-300">Close</button>
+                class="w-full bg-indigo-950	 text-white py-2 rounded hover:bg-indigo-950	-700 transition-colors duration-300">Close</button>
         </div>
     </div>
 
@@ -340,13 +341,13 @@
         </button>
     </div>
     <div id="floating-chat-bubble"
-        class="fixed bottom-5 right-5 w-14 h-14 bg-primary rounded-full flex justify-center items-center cursor-pointer shadow-lg z-50 hover:bg-indigo-600 transition-colors duration-300">
+        class="fixed bottom-5 right-5 w-14 h-14 bg-indigo-950	 rounded-full flex justify-center items-center cursor-pointer shadow-lg z-50 hover:bg-indigo-950	-600 transition-colors duration-300">
         <span class="text-3xl text-white">💬</span>
     </div>
 
     <div id="chat-modal"
         class="hidden fixed bottom-24 right-5 w-80 h-96 bg-white rounded-lg shadow-xl z-50 flex flex-col overflow-hidden">
-        <div class="bg-primary text-white p-4 flex justify-between items-center">
+        <div class="bg-indigo-950	 text-white p-4 flex justify-between items-center">
             <h3 class="text-lg font-semibold">ChatGPT</h3>
             <button id="close-chat" class="text-2xl font-bold hover:text-gray-200">&times;</button>
         </div>
@@ -357,7 +358,7 @@
                     class="flex-grow border border-gray-300 rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="Type your message..."></textarea>
                 <button id="send-message"
-                    class="bg-primary text-white px-4 rounded-r-md hover:bg-green-600 transition-colors duration-300">Send</button>
+                    class="bg-indigo-950	 text-white px-4 rounded-r-md hover:bg-green-600 transition-colors duration-300">Send</button>
             </div>
         </div>
     </div>
@@ -849,7 +850,7 @@
         }
 
         // Add a new button for viewing saved PDFs
-        $('<button id="view-saved-pdfs" class="fixed top-10 right-10 bg-primary text-white px-5 py-3 rounded-full shadow-lg hover:bg-indigo-600 transition transform hover:-translate-y-1">View Saved PDFs</button>').insertAfter('#download-pdf');
+        $('<button id="view-saved-pdfs" class="fixed top-10 right-10 bg-indigo-950	 text-white px-5 py-3 rounded-full shadow-lg hover:bg-indigo-950	-600 transition transform hover:-translate-y-1">View Saved PDFs</button>').insertAfter('#download-pdf');
 
         $('#view-saved-pdfs').click(function () {
             $.ajax({
@@ -1253,6 +1254,53 @@
                 function () { $(this).css('opacity', '0.8'); },
                 function () { $(this).css('opacity', '1'); }
             );
+        });
+         // Three.js scene setup
+   const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('three-container').appendChild(renderer.domElement);
+
+        // Create floating particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 5;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.005,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.8,
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 3;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.x += 0.0005;
+            particlesMesh.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>

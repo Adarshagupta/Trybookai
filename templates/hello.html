@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookAI - AI-Powered Book Generation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         
@@ -17,32 +19,42 @@
             --gradient-2: linear-gradient(45deg, #8a2be2, #4b0082);
         }
         
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
             background: var(--primary-bg);
             color: var(--text-color);
+            overflow-x: hidden;
         }
+
         .container {
             width: 90%;
             max-width: 1200px;
             margin: auto;
             padding: 20px;
         }
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
+            flex-wrap: wrap;
         }
+
         .logo {
             font-size: 24px;
             font-weight: 700;
             display: flex;
             align-items: center;
         }
+
         .logo-icon {
             width: 30px;
             height: 30px;
@@ -50,35 +62,70 @@
             border-radius: 50%;
             margin-right: 10px;
         }
+
+        nav {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         nav a {
             color: var(--text-color);
             text-decoration: none;
             margin-left: 20px;
             font-weight: 300;
+            transition: color 0.3s ease;
         }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
         .button {
             background: var(--gradient-1);
             color: var(--text-color);
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: 600;
+            transition: transform 0.3s ease;
         }
+
+        .button:hover {
+            transform: translateY(-3px);
+        }
+        #three-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hero {
+            position: relative;
+            z-index: 1;
+        }
+
         .hero {
             text-align: center;
-            padding: 80px 0;
+            padding: 80px 0 0px 20px;
             position: relative;
         }
+
         h1 {
             font-size: 48px;
             margin-bottom: 20px;
             line-height: 1.2;
         }
+
         .highlight {
             background: var(--gradient-2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             position: relative;
         }
+
         .highlight::after {
             content: '';
             position: absolute;
@@ -88,12 +135,14 @@
             height: 3px;
             background: var(--gradient-1);
         }
+
         .subtitle {
             font-size: 18px;
             max-width: 600px;
             margin: 0 auto 40px;
             color: var(--text-secondary);
         }
+
         .cta {
             display: inline-block;
             background: var(--gradient-1);
@@ -104,25 +153,36 @@
             font-weight: 600;
             transition: transform 0.3s ease;
         }
+
         .cta:hover {
             transform: translateY(-3px);
         }
+
         .main-content {
             margin-top: 80px;
             position: relative;
         }
+
         .ai-demo {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             padding: 40px;
             text-align: center;
             position: relative;
+            overflow: hidden;
         }
+
         .ai-demo img {
             max-width: 100%;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
         }
+
+        .ai-demo img:hover {
+            transform: scale(1.05);
+        }
+
         .floating-ui {
             position: absolute;
             background: rgba(255, 255, 255, 0.1);
@@ -131,15 +191,19 @@
             padding: 10px;
             display: flex;
             align-items: center;
+            transition: opacity 0.3s ease;
         }
+
         .floating-ui.top-left {
             top: 20px;
             left: 20px;
         }
+
         .floating-ui.bottom-right {
             bottom: 20px;
             right: 20px;
         }
+
         .floating-icon {
             width: 24px;
             height: 24px;
@@ -147,14 +211,25 @@
             border-radius: 50%;
             margin-right: 10px;
         }
+
         .features {
             display: flex;
             justify-content: space-around;
             margin-top: 80px;
+            flex-wrap: wrap;
         }
+
         .feature {
             text-align: center;
+            flex-basis: calc(25% - 20px);
+            margin-bottom: 40px;
+            transition: transform 0.3s ease;
         }
+
+        .feature:hover {
+            transform: translateY(-10px);
+        }
+
         .feature-icon {
             width: 60px;
             height: 60px;
@@ -167,23 +242,27 @@
             font-size: 24px;
             color: var(--text-color);
         }
+
         .how-it-works, .roadmap {
             margin-top: 80px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             padding: 40px;
         }
+
         .step-container, .roadmap-container {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
         }
+
         .step, .roadmap-item {
             flex-basis: calc(50% - 20px);
             margin-bottom: 40px;
             display: flex;
             align-items: flex-start;
         }
+
         .step-icon, .roadmap-icon {
             width: 50px;
             height: 50px;
@@ -197,22 +276,76 @@
             margin-right: 20px;
             flex-shrink: 0;
         }
+
         .step-content, .roadmap-content {
             flex-grow: 1;
         }
+
         .step h3, .roadmap-item h3 {
             margin-top: 0;
         }
+
         .testimonials {
             margin-top: 80px;
             text-align: center;
         }
+
+        .testimonial-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
         .testimonial {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             padding: 20px;
             margin-top: 20px;
+            flex-basis: calc(50% - 20px);
+            transition: transform 0.3s ease;
         }
+
+        .testimonial:hover {
+            transform: translateY(-5px);
+        }
+
+        .newsletter {
+            margin-top: 80px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 40px;
+        }
+
+        .newsletter form {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .newsletter input[type="email"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            width: 60%;
+            max-width: 300px;
+        }
+
+        .newsletter button {
+            background: var(--gradient-1);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            transform: translateY(-3px);
+        }
+
         .background-particles {
             position: fixed;
             top: 0;
@@ -222,42 +355,181 @@
             pointer-events: none;
             z-index: -1;
         }
+
         .particle {
             position: absolute;
             width: 6px;
             height: 6px;
             background-color: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
         }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
         footer {
             margin-top: 80px;
             text-align: center;
             padding: 20px 0;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav {
+                margin-top: 20px;
+            }
+
+            nav a {
+                margin: 10px 20px 10px 0;
+            }
+
+            .feature {
+                flex-basis: calc(50% - 20px);
+            }
+
+            .step, .roadmap-item {
+                flex-basis: 100%;
+            }
+
+            .testimonial {
+                flex-basis: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 36px;
+            }
+
+            .feature {
+                flex-basis: 100%;
+            }
+
+            .newsletter input[type="email"] {
+                width: 100%;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .newsletter button {
+                width: 100%;
+                border-radius: 5px;
+            }
+        }
+              /* Add these new styles for the book samples section */
+              .book-samples {
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .samples-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .book-sample {
+            flex-basis: calc(33.333% - 40px);
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .book-sample:hover {
+            transform: translateY(-10px);
+        }
+
+        .book-cover {
+            width: 200px;
+            height: 300px;
+            margin: 0 auto 20px;
+            background: var(--gradient-2);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 18px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .book-excerpt {
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .read-more:hover {
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .book-sample {
+                flex-basis: calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .book-sample {
+                flex-basis: 100%;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <div class="logo-icon"></div>
-                <img src="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png" width="50px">BookAI
-            </div>
-            <nav>
-                <a href="#features">Features</a>
-                <a href="#how-it-works">How It Works</a>
-                <a href="#roadmap">Roadmap</a>
-                <a href="/playground" class="button">New Account</a>
-                <a href="/playground" class="button">Sign In</a>
-            </nav>
-        </header>
+  <div id="three-container"></div>
+  <div class="container">
+      <header>
+          <div class="logo">
+              <div class="logo-icon"></div>
+              <img src="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png" width="50px" alt="BookAI Logo">BookAI
+          </div>
+          <nav>
+              <a href="#features">Features</a>
+              <a href="#how-it-works">How It Works</a>
+              <a href="#roadmap">Roadmap</a>
+              <a href="/playground" class="button">New Account</a>
+              <a href="/playground" class="button">Sign In</a>
+          </nav>
+      </header>
 
-        <section class="hero">
-            <h1>Explore the Possibilities of <span class="highlight">AI Book Writing</span> with BookAI</h1>
-            <p class="subtitle">Unleash the power of AI to create captivating books in minutes.</p>
-            <a href="/playground" class="cta">Get Started</a>
-        </section>
+      <section class="hero">
+          <h1>Explore the Possibilities of <span class="highlight">AI Book Writing</span> with BookAI</h1>
+          <p class="subtitle">Unleash the power of AI to create captivating books in minutes. Download, Distribute wherever you want. Generate unlimited free books</p>
+          <a href="/playground" class="cta">Get Started</a>
+      </section>
 
         <section class="main-content">
             <div class="ai-demo">
@@ -279,26 +551,31 @@
                     <i class="fas fa-robot"></i>
                 </div>
                 <h3>AI-Powered Writing</h3>
+                <p>Generate high-quality content with advanced AI technology.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">
                     <i class="fas fa-book"></i>
                 </div>
                 <h3>Custom Genres</h3>
+                <p>Create stories in any genre or blend multiple styles.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">
                     <i class="fas fa-download"></i>
                 </div>
                 <h3>Instant Download</h3>
+                <p>Get your completed book in various formats instantly.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">
                     <i class="fas fa-language"></i>
                 </div>
                 <h3>Multilingual</h3>
+                <p>Generate content in multiple languages effortlessly.</p>
             </div>
         </section>
+        
 
         <section id="how-it-works" class="how-it-works">
             <h2>How It Works</h2>
@@ -313,104 +590,191 @@
                     </div>
                 </div>
                 <div class="step">
-                    <div class="step-icon">
-                        <i class="fas fa-pencil-alt"></i>
-                    </div>
-                    <div class="step-content">
-                        <h3>Provide Key Details</h3>
-                        <p>Input main characters, plot points, or themes to guide the AI.</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-icon">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <div class="step-content">
-                        <h3>AI Generation</h3>
-                        <p>Our advanced AI creates your book based on your inputs.</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="step-content">
-                        <h3>Review and Download</h3>
-                        <p>Review your generated book and download in your preferred format.</p>
-                    </div>
-                </div>
+                  <div class="step-icon">
+                      <i class="fas fa-pencil-alt"></i>
+                  </div>
+                  <div class="step-content">
+                      <h3>Provide Key Details</h3>
+                      <p>Input main characters, plot points, or themes to guide the AI.</p>
+                  </div>
+              </div>
+              <div class="step">
+                  <div class="step-icon">
+                      <i class="fas fa-cogs"></i>
+                  </div>
+                  <div class="step-content">
+                      <h3>AI Generation</h3>
+                      <p>Our advanced AI creates your book based on your inputs.</p>
+                  </div>
+              </div>
+              <div class="step">
+                  <div class="step-icon">
+                      <i class="fas fa-check-circle"></i>
+                  </div>
+                  <div class="step-content">
+                      <h3>Review and Download</h3>
+                      <p>Review your generated book and download in your preferred format.</p>
+                  </div>
+              </div>
+          </div>
+      </section>
+       <!-- Add this new section before the testimonials section -->
+       <section class="book-samples">
+        <h2>Sample Books Generated by BookAI</h2>
+        <p>Explore some of the captivating books created using our AI technology.</p>
+        <div class="samples-container">
+            <div class="book-sample">
+                <div class="book-cover">The Quantum Paradox</div>
+                <h3>Science Fiction</h3>
+                <p class="book-excerpt">"As Dr. Elara stepped through the shimmering portal, she knew there was no turning back. The fate of two universes now rested in her hands..."</p>
+                <a href="#" class="read-more">Read More</a>
             </div>
-        </section>
+            <div class="book-sample">
+                <div class="book-cover">Whispers in the Mist</div>
+                <h3>Mystery</h3>
+                <p class="book-excerpt">"The old lighthouse stood silent, its beacon long extinguished. But on foggy nights, some swore they could still see its ghostly light..."</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+            <div class="book-sample">
+                <div class="book-cover">Echoes of Eternity</div>
+                <h3>Fantasy</h3>
+                <p class="book-excerpt">"The ancient prophecy spoke of a child born with starlight in their eyes. As the comet blazed overhead, the kingdom held its breath..."</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </div>
+    </section>
 
-        <section id="roadmap" class="roadmap">
-            <h2>Roadmap</h2>
-            <div class="roadmap-container">
-                <div class="roadmap-item">
-                    <div class="roadmap-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div class="roadmap-content">
-                        <h3>Advanced Character Development</h3>
-                        <p>AI-powered tool for creating deep, complex characters.</p>
-                    </div>
-                </div>
-                <div class="roadmap-item">
-                    <div class="roadmap-icon">
-                        <i class="fas fa-store"></i>
-                    </div>
-                    <div class="roadmap-content">
-                        <h3>E-book Platform Integration</h3>
-                        <p>Seamless publishing to popular e-book platforms.</p>
-                    </div>
-                </div>
-                <div class="roadmap-item">
-                    <div class="roadmap-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="roadmap-content">
-                        <h3>Collaborative Writing</h3>
-                        <p>Co-create stories with other authors or AI assistants.</p>
-                    </div>
-                </div>
-                <div class="roadmap-item">
-                    <div class="roadmap-icon">
-                        <i class="fas fa-paint-brush"></i>
-                    </div>
-                    <div class="roadmap-content">
-                        <h3>AI Cover Art Generation</h3>
-                        <p>Create stunning book covers with AI-generated art.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- ... (remaining content stays the same) ... -->
 
-        <section class="testimonials">
-            <h2>What Our Users Say</h2>
-            <div class="testimonial">
-                <p>"BookAI revolutionized my writing process. I completed my debut novel in just two weeks!"</p>
-                <p><strong>- Sarah J., Author</strong></p>
-            </div>
-            <div class="testimonial">
-                <p>"The AI-generated ideas helped me overcome writer's block. It's like having a co-author at your fingertips."</p>
-                <p><strong>- Mark T., Aspiring Writer</strong></p>
-            </div>
-        </section>
+      <section id="roadmap" class="roadmap">
+          <h2>Roadmap</h2>
+          <div class="roadmap-container">
+              <div class="roadmap-item">
+                  <div class="roadmap-icon">
+                      <i class="fas fa-user-circle"></i>
+                  </div>
+                  <div class="roadmap-content">
+                      <h3>Advanced Character Development</h3>
+                      <p>AI-powered tool for creating deep, complex characters.</p>
+                  </div>
+              </div>
+              <div class="roadmap-item">
+                  <div class="roadmap-icon">
+                      <i class="fas fa-store"></i>
+                  </div>
+                  <div class="roadmap-content">
+                      <h3>E-book Platform Integration</h3>
+                      <p>Seamless publishing to popular e-book platforms.</p>
+                  </div>
+              </div>
+              <div class="roadmap-item">
+                  <div class="roadmap-icon">
+                      <i class="fas fa-users"></i>
+                  </div>
+                  <div class="roadmap-content">
+                      <h3>Collaborative Writing</h3>
+                      <p>Co-create stories with other authors or AI assistants.</p>
+                  </div>
+              </div>
+              <div class="roadmap-item">
+                  <div class="roadmap-icon">
+                      <i class="fas fa-paint-brush"></i>
+                  </div>
+                  <div class="roadmap-content">
+                      <h3>AI Cover Art Generation</h3>
+                      <p>Create stunning book covers with AI-generated art.</p>
+                  </div>
+              </div>
+          </div>
+      </section>
 
-        <footer>
-            <p>&copy; 2024 BookAI. All rights reserved.</p>
-            <div>
-                <a href="#">Terms of Service</a> |
-                <a href="#">Privacy Policy</a> |
-                <a href="#">Contact Us</a>
-            </div>
-        </footer>
-    </div>
-    <div class="background-particles">
-        <div class="particle" style="top: 10%; left: 20%;"></div>
-        <div class="particle" style="top: 30%; left: 80%;"></div>
-        <div class="particle" style="top: 70%; left: 50%;"></div>
-        <div class="particle" style="top: 40%; left: 10%;"></div>
-        <div class="particle" style="top: 60%; left: 90%;"></div>
-    </div>
+      <section class="testimonials">
+          <h2>What Our Users Say</h2>
+          <div class="testimonial-container">
+              <div class="testimonial">
+                  <p>"BookAI revolutionized my writing process. I completed my debut novel in just two weeks!"</p>
+                  <p><strong>- Sarah J., Author</strong></p>
+              </div>
+              <div class="testimonial">
+                  <p>"The AI-generated ideas helped me overcome writer's block. It's like having a co-author at your fingertips."</p>
+                  <p><strong>- Mark T., Aspiring Writer</strong></p>
+              </div>
+          </div>
+      </section>
+
+      <section class="newsletter">
+          <h2>Stay Updated</h2>
+          <p>Subscribe to our newsletter for the latest AI writing tips and BookAI updates.</p>
+          <form>
+              <input type="email" placeholder="Enter your email" required>
+              <button type="submit">Subscribe</button>
+          </form>
+      </section>
+
+      <footer>
+          <p>&copy; 2024 BookAI. All rights reserved.</p>
+          <div>
+              <a href="#">Terms of Service</a>
+              <a href="#">Privacy Policy</a>
+              <a href="#">Contact Us</a>
+          </div>
+      </footer>
+  </div>
+  <div class="background-particles">
+      <div class="particle" style="top: 10%; left: 20%;"></div>
+      <div class="particle" style="top: 30%; left: 80%;"></div>
+      <div class="particle" style="top: 70%; left: 50%;"></div>
+      <div class="particle" style="top: 40%; left: 10%;"></div>
+      <div class="particle" style="top: 60%; left: 90%;"></div>
+  </div>
 </body>
+<script>
+   // Three.js scene setup
+   const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('three-container').appendChild(renderer.domElement);
+
+        // Create floating particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 5;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.005,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.8,
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 3;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.x += 0.0005;
+            particlesMesh.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+</script>
 </html>
