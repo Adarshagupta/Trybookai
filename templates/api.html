@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Access - Book Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        :root {
+            --primary-color: #6200ea;
+            --secondary-color: #b388ff;
+            --background-color: #1a237e;
+            --text-color: #ffffff;
+            --accent-color: #00bcd4;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        nav ul {
+            padding: 0;
+            list-style-type: none;
+            margin-top: 1rem;
+        }
+        
+        nav ul li {
+            display: inline;
+            margin-right: 1rem;
+        }
+        
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+        
+        main {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            margin-top: 0;
+        }
+        
+        h3 {
+            color: var(--accent-color);
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        button:hover {
+            background-color: #00acc1;
+            transform: scale(1.05);
+        }
+        
+        #apiKeyDisplay {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            transition: opacity 0.3s ease;
+        }
+        
+        pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background-color: rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        @media (max-width: 600px) {
+            main {
+                padding: 1rem;
+            }
+            
+            section {
+                padding: 1.5rem;
+            }
+            
+            table, th, td {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>API Access</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('hello') }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('api_page') }}">API</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Generate API Key</h2>
+            <button id="generateApiKey">Generate API Key</button>
+            <div id="apiKeyDisplay"></div>
+        </section>
+        <section>
+            <h2>API Documentation</h2>
+            <h3>Endpoint: https://tryBookAI.com/api/generate-book</h3>
+            <p><strong>Method:</strong> POST</p>
+            <p><strong>Headers:</strong></p>
+            <ul>
+                <li>Content-Type: application/json</li>
+                <li>X-API-Key: Your API Key</li>
+            </ul>
+            <p><strong>Request Body:</strong></p>
+            <pre>
+{
+    "api": "openai" or "together",
+    "model": "model name",
+    "topic": "book topic",
+    "language": "language",
+    "word_count": number of words
+}
+            </pre>
+            <p><strong>Example Response:</strong></p>
+            <pre>
+{
+    "message": "Book generation started",
+    "status": "processing"
+}
+            </pre>
+        </section>
+        <section>
+            <h2>API Pricing</h2>
+            <p>Our API pricing is based on the model used and the number of tokens processed. Here's a breakdown of the costs:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>API</th>
+                        <th>Model</th>
+                        <th>Price per 1K tokens</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>OpenAI</td>
+                        <td>GPT-3.5</td>
+                        <td>$0.002</td>
+                    </tr>
+                    <tr>
+                        <td>OpenAI</td>
+                        <td>GPT-4</td>
+                        <td>$0.03</td>
+                    </tr>
+                    <tr>
+                        <td>Together AI</td>
+                        <td>Llama-2-70b</td>
+                        <td>$0.0008</td>
+                    </tr>
+                    <tr>
+                        <td>Together AI</td>
+                        <td>Llama-2-13b</td>
+                        <td>$0.0006</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>Token Estimation</h3>
+            <p>On average, 1 token is approximately 4 characters or 0.75 words. For precise pricing, we recommend using our token calculator tool.</p>
+            <h3>Billing</h3>
+            <p>You will only be charged for the tokens used in generating the book. The API tracks token usage and bills accordingly. Detailed usage reports are available in your account dashboard.</p>
+        </section>
+    </main>
+    <script>
+        document.getElementById('generateApiKey').addEventListener('click', function() {
+            fetch('/generate-api-key', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                const apiKeyDisplay = document.getElementById('apiKeyDisplay');
+                apiKeyDisplay.innerHTML = `Your API Key: <strong>${data.api_key}</strong>`;
+                apiKeyDisplay.style.opacity = '0';
+                setTimeout(() => {
+                    apiKeyDisplay.style.opacity = '1';
+                }, 100);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('apiKeyDisplay').innerHTML = 'Error generating API key';
+            });
+        });
+    </script>
+</body>
+</html>

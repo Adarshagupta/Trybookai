@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import time
 import traceback
-from flask import Flask, render_template, request, jsonify, send_file, Response
+from flask import Flask, render_template, request, jsonify, send_file, Response, abort
 import openai
 from together import Together
 from reportlab.lib.pagesizes import letter
@@ -16,6 +16,7 @@ import aiohttp
 from queue import Queue
 import sqlite3
 from datetime import datetime
+import secrets
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -44,6 +45,11 @@ def init_db():
                   title TEXT,
                   filepath TEXT,
                   timestamp TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS api_keys
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  ip TEXT,
+                  api_key TEXT UNIQUE,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     conn.close()
 
@@ -323,6 +329,93 @@ def download_saved_pdf(pdf_id):
         app.logger.error(f"Download saved PDF error: {str(e)}")
         app.logger.error(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
+
+def generate_api_key():
+    return secrets.token_urlsafe(32)
+
+@app.route('/generate-api-key', methods=['POST'])
+def create_api_key():
+    ip = request.remote_addr
+    api_key = generate_api_key()
+    
+    conn = sqlite3.connect('pdfs.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO api_keys (ip, api_key) VALUES (?, ?)", (ip, api_key))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'api_key': api_key})
+
+@app.route('/api/generate-book', methods=['POST'])
+async def api_generate_book():
+    api_key = request.headers.get('X-API-Key')
+    if not api_key:
+        abort(401, description="API key is missing")
+    
+    conn = sqlite3.connect('pdfs.db')
+    c = conn.cursor()
+    c.execute("SELECT ip FROM api_keys WHERE api_key = ?", (api_key,))
+    result = c.fetchone()
+    conn.close()
+    
+    if not result:
+        abort(401, description="Invalid API key")
+    
+    api = request.json.get('api')
+    model = request.json.get('model')
+    topic = request.json.get('topic')
+    language = request.json.get('language')
+    target_word_count = request.json.get('word_count')
+    
+    if not all([api, model, topic, language, target_word_count]):
+        abort(400, description="Missing required parameters")
+    
+    try:
+        target_word_count = int(target_word_count)
+    except ValueError:
+        abort(400, description="Invalid word count")
+    
+    current_word_count = 0
+    book_content = []
+    chapter_count = 0
+
+    tasks = []
+    while current_word_count < target_word_count:
+        is_new_chapter = (chapter_count == 0) or (current_word_count > 0 and current_word_count % 3000 < 500)
+        
+        if is_new_chapter:
+            chapter_count += 1
+            tasks = []
+    while current_word_count < target_word_count:
+        is_new_chapter = (chapter_count == 0) or (current_word_count > 0 and current_word_count % 3000 < 500)
+        
+        if is_new_chapter:
+            chapter_count += 1
+            task = asyncio.create_task(generate_chunk(api, model, topic, current_word_count, language, is_new_chapter=True))
+        else:
+            task = asyncio.create_task(generate_chunk(api, model, topic, current_word_count, language))
+        
+        tasks.append(task)
+        current_word_count += 500  # Approximate word count per chunk
+        
+        if len(tasks) >= 5 or current_word_count >= target_word_count:
+            chunks = await asyncio.gather(*tasks)
+            for chunk in chunks:
+                book_content.append(chunk)
+            tasks = []
+            await asyncio.sleep(1)  # Small delay to avoid rate limits
+
+    formatted_book = "\n\n".join(book_content)
+    actual_word_count = len(formatted_book.split())
+
+    return jsonify({
+        'content': formatted_book,
+        'word_count': actual_word_count
+    })
+
+@app.route('/api')
+def api_page():
+    return render_template('api.html')
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5151)
