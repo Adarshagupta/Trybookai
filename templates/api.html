@@ -3,57 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Access - Book Generator</title>
+    <title>API Documentation - Book Generator</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code&display=swap');
         
         :root {
-            --primary-color: #6200ea;
-            --secondary-color: #b388ff;
-            --background-color: #1a237e;
-            --text-color: #ffffff;
-            --accent-color: #00bcd4;
+            --primary-color: #6366f1;
+            --secondary-color: #a5b4fc;
+            --background-color: #0f172a;
+            --text-color: #e2e8f0;
+            --accent-color: #22d3ee;
+            --code-background: #1e293b;
+            --section-background: #1e293b;
+            --border-color: #334155;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--background-color);
             margin: 0;
             padding: 0;
-            transition: background-color 0.3s ease;
         }
         
         header {
             background-color: var(--primary-color);
-            padding: 1rem;
+            padding: 2rem 0;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         h1 {
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: 1px;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+        
+        h2, h3, h4 {
+            margin-top: 2rem;
+            color: var(--secondary-color);
+        }
+        
+        nav {
+            background-color: var(--section-background);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         nav ul {
-            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
             list-style-type: none;
-            margin-top: 1rem;
+            padding: 0;
+            margin: 0;
         }
         
         nav ul li {
-            display: inline;
-            margin-right: 1rem;
+            margin: 0.5rem 1rem;
         }
         
         nav ul li a {
             color: var(--text-color);
             text-decoration: none;
-            font-weight: 300;
+            font-weight: 500;
             transition: color 0.3s ease;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         nav ul li a:hover {
@@ -61,31 +88,81 @@
         }
         
         main {
-            padding: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
         }
         
         section {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: var(--section-background);
             border-radius: 8px;
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border-color);
         }
         
-        section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        pre, code {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--code-background);
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
         }
         
-        h2 {
-            color: var(--secondary-color);
-            margin-top: 0;
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
         
-        h3 {
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+            color: #ffffff;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .endpoint {
+            background-color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .http-method {
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .parameter-table td:first-child {
+            font-weight: bold;
             color: var(--accent-color);
         }
         
@@ -93,60 +170,42 @@
             background-color: var(--accent-color);
             color: var(--background-color);
             border: none;
-            padding: 12px 24px;
-            border-radius: 30px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 1rem;
         }
         
         button:hover {
-            background-color: #00acc1;
-            transform: scale(1.05);
+            background-color: #0ea5e9;
+            transform: translateY(-2px);
         }
         
         #apiKeyDisplay {
             margin-top: 1rem;
             padding: 1rem;
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: var(--code-background);
             border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            transition: opacity 0.3s ease;
+            font-family: 'Fira Code', monospace;
+            border: 1px solid var(--border-color);
+            word-break: break-all;
         }
         
-        pre {
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 1rem;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        th {
-            background-color: rgba(0, 0, 0, 0.2);
-            font-weight: 600;
-        }
-        
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+            
             main {
-                padding: 1rem;
+                padding: 0 1rem;
             }
             
             section {
@@ -154,56 +213,160 @@
             }
             
             table, th, td {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>API Access</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('hello') }}">Home</a></li>
-                <li><a href="{{ url_for('about') }}">About</a></li>
-                <li><a href="{{ url_for('api_page') }}">API</a></li>
-            </ul>
-        </nav>
+        <h1>Book Generator API</h1>
     </header>
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#authentication">Authentication</a></li>
+            <li><a href="#endpoints">Endpoints</a></li>
+            <li><a href="#tutorial">Tutorial</a></li>
+            <li><a href="#code-examples">Code Examples</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+        </ul>
+    </nav>
     <main>
-        <section>
-            <h2>Generate API Key</h2>
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>The Book Generator API allows you to generate books on various topics using different language models. This documentation provides details on how to use the API, including authentication, available endpoints, and code examples.</p>
+        </section>
+
+        <section id="authentication">
+            <h2>Authentication</h2>
+            <p>To use the API, you need to include your API key in the header of each request:</p>
+            <pre><code>X-API-Key: YOUR_API_KEY</code></pre>
+            <p>To generate an API key, use the button below:</p>
             <button id="generateApiKey">Generate API Key</button>
             <div id="apiKeyDisplay"></div>
         </section>
-        <section>
-            <h2>API Documentation</h2>
-            <h3>Endpoint: https://tryBookAI.com/api/generate-book</h3>
-            <p><strong>Method:</strong> POST</p>
-            <p><strong>Headers:</strong></p>
-            <ul>
-                <li>Content-Type: application/json</li>
-                <li>X-API-Key: Your API Key</li>
-            </ul>
-            <p><strong>Request Body:</strong></p>
-            <pre>
-{
-    "api": "openai" or "together",
-    "model": "model name",
-    "topic": "book topic",
-    "language": "language",
-    "word_count": number of words
-}
-            </pre>
-            <p><strong>Example Response:</strong></p>
-            <pre>
-{
+
+        <section id="endpoints">
+            <h2>Endpoints</h2>
+            <h3>Generate Book</h3>
+            <p><span class="http-method">POST</span> <span class="endpoint">/api/generate-book</span></p>
+            <h4>Request Body</h4>
+            <table class="parameter-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>api</td>
+                    <td>string</td>
+                    <td>The API provider to use. Options: "openai" or "together"</td>
+                </tr>
+                <tr>
+                    <td>model</td>
+                    <td>string</td>
+                    <td>The specific model to use (e.g., "gpt-3.5-turbo", "gpt-4", "llama-2-70b")</td>
+                </tr>
+                <tr>
+                    <td>topic</td>
+                    <td>string</td>
+                    <td>The main topic or theme of the book</td>
+                </tr>
+                <tr>
+                    <td>language</td>
+                    <td>string</td>
+                    <td>The language in which the book should be generated</td>
+                </tr>
+                <tr>
+                    <td>word_count</td>
+                    <td>integer</td>
+                    <td>The approximate number of words for the generated book</td>
+                </tr>
+            </table>
+            <h4>Response</h4>
+            <pre><code>{
     "message": "Book generation started",
-    "status": "processing"
-}
-            </pre>
+    "status": "processing",
+    "job_id": "unique-job-identifier"
+}</code></pre>
         </section>
-        <section>
+
+        <section id="tutorial">
+            <h2>Tutorial</h2>
+            <h3>Step 1: Obtain an API Key</h3>
+            <p>Generate an API key using the button in the Authentication section above.</p>
+            
+            <h3>Step 2: Make a Request</h3>
+            <p>Use your preferred programming language or tool to make a POST request to the /api/generate-book endpoint. Include your API key in the header and the required parameters in the request body.</p>
+            
+            <h3>Step 3: Handle the Response</h3>
+            <p>The API will return a response with a job ID. You can use this ID to check the status of your book generation job.</p>
+            
+            <h3>Step 4: Retrieve the Generated Book</h3>
+            <p>Once the job is complete, you can retrieve the generated book using the job ID (endpoint to be implemented).</p>
+        </section>
+
+        <section id="code-examples">
+            <h2>Code Examples</h2>
+            <h3>Python</h3>
+            <pre><code>import requests
+
+API_KEY = "your_api_key_here"
+API_ENDPOINT = "https://tryBookAI.com/api/generate-book"
+
+headers = {
+    "Content-Type": "application/json",
+    "X-API-Key": API_KEY
+}
+
+data = {
+    "api": "openai",
+    "model": "gpt-3.5-turbo",
+    "topic": "The Future of Artificial Intelligence",
+    "language": "English",
+    "word_count": 5000
+}
+
+response = requests.post(API_ENDPOINT, json=data, headers=headers)
+
+if response.status_code == 200:
+    result = response.json()
+    print(f"Book generation started. Job ID: {result['job_id']}")
+else:
+    print(f"Error: {response.status_code} - {response.text}")
+</code></pre>
+
+            <h3>JavaScript (Node.js)</h3>
+            <pre><code>const axios = require('axios');
+
+const API_KEY = 'your_api_key_here';
+const API_ENDPOINT = 'https://tryBookAI.com/api/generate-book';
+
+const headers = {
+    'Content-Type': 'application/json',
+    'X-API-Key': API_KEY
+};
+
+const data = {
+    api: 'openai',
+    model: 'gpt-3.5-turbo',
+    topic: 'The Future of Artificial Intelligence',
+    language: 'English',
+    word_count: 5000
+};
+
+axios.post(API_ENDPOINT, data, { headers })
+    .then(response => {
+        console.log(`Book generation started. Job ID: ${response.data.job_id}`);
+    })
+    .catch(error => {
+        console.error('Error:', error.response ? error.response.data : error.message);
+    });
+</code></pre>
+        </section>
+
+        <section id="pricing">
             <h2>API Pricing</h2>
             <p>Our API pricing is based on the model used and the number of tokens processed. Here's a breakdown of the costs:</p>
             <table>
