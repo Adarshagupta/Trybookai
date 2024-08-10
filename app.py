@@ -116,6 +116,10 @@ def hello():
 def about():
     return render_template('about.html')
 
+@app.route('/fr')
+def french():
+    return render_template('home(fr).html')
+
 @app.route('/playground')
 def playground():
     return render_template('index.html')
