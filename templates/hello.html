@@ -725,6 +725,34 @@
           flex-basis: 100%;
         }
       }
+      #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b002da4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #c6d1d8;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #content {
+            display: none;
+        }
     </style>
     <link
       rel="stylesheet"
@@ -732,7 +760,11 @@
     />
   </head>
   <body>
+    <div id="preloader">
+      <div class="loader"></div>
+  </div>
     <div id="three-container"></div>
+    
     <div class="container">
       <header>
         <div class="logo">
@@ -1067,5 +1099,18 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
+    window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            const content = document.getElementById('content');
+            
+            // Fade out the preloader
+            preloader.style.opacity = '0';
+            
+            // After the fade-out transition, hide the preloader and show the content
+            setTimeout(function() {
+                preloader.style.display = 'none';
+                content.style.display = 'block';
+            }, 500);
+        });
   </script>
 </html>

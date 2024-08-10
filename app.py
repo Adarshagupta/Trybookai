@@ -120,6 +120,10 @@ def about():
 def french():
     return render_template('home(fr).html')
 
+@app.route('/jobs')
+def jobs():
+    return render_template('jobs.html')
+
 @app.route('/playground')
 def playground():
     return render_template('index.html')
