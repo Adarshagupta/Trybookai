@@ -51,9 +51,9 @@ init_db()
 
 async def generate_chunk(api, model, topic, current_word_count, language, is_new_chapter=False):
     if is_new_chapter:
-        prompt = f"Write a detailed chapter for a book about {topic} in {language}. This is around word {current_word_count} of the book. Start with a chapter title, then write at least 500 words of content."
+        prompt = f"Write a detailed chapter for a book about {topic} in {language}. This is around word {current_word_count} of the book. Start with a chapter title, then write at least {current_word_count} words of content."
     else:
-        prompt = f"Continue writing a detailed book about {topic} in {language}. This is around word {current_word_count} of the book. Write at least 500 words, ensuring the narrative flows smoothly from the previous section."
+        prompt = f"Continue writing a detailed book about {topic} in {language}. This is around word {current_word_count} of the book. Write at least {current_word_count} words, ensuring the narrative flows smoothly from the previous section."
     
     try:
         if api == 'openai':
@@ -78,7 +78,7 @@ async def generate_chunk(api, model, topic, current_word_count, language, is_new
             response = together_client.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "system", "content": f"You are an author writing a detailed book in {language}. Provide long, comprehensive responses with at least 500 words per chunk."},
+                    {"role": "system", "content": f"You are an author writing a detailed book in {language}. Provide long, comprehensive responses with at least {current_word_count} words per chunk."},
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=2000,
@@ -92,7 +92,7 @@ async def generate_chunk(api, model, topic, current_word_count, language, is_new
             
             # Ensure minimum word count
             while len(generated_text.split()) < 500:
-                additional_prompt = f"Continue the previous text, adding more details and expanding the narrative. Write at least {500 - len(generated_text.split())} more words."
+                additional_prompt = f"Continue the previous text, adding more details and expanding the narrative. Write at least {current_word_count} more words."
                 additional_response = together_client.chat.completions.create(
                     model=model,
                     messages=[
