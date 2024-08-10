@@ -1123,5 +1123,32 @@
                 content.style.display = 'block';
             }, 500);
         });
+        document.getElementById('api').addEventListener('change', function() {
+    const modelSelect = document.getElementById('model');
+    const selectedApi = this.value;
+
+    // Clear existing options
+    modelSelect.innerHTML = '';
+
+    if (selectedApi === 'openai') {
+        // Add OpenAI models
+        const openAiModels = ['gpt-4o-mini', 'gpt-3.5-turbo', 'gpt-4-turbo', 'gpt-4o-mini-2024-07-18'];
+        openAiModels.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            modelSelect.appendChild(option);
+        });
+    } else if (selectedApi === 'together') {
+        // Add Together models
+        const togetherModels = ['meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo'];
+        togetherModels.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            modelSelect.appendChild(option);
+        });
+    }
+});
   </script>
 </html>

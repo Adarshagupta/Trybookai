@@ -96,8 +96,6 @@
             <div class="flex justify-between items-center mb-6 lg:mb-10">
                 <img src="https://raw.githubusercontent.com/Adarshagupta/BookAI/main/logo.png" alt="BookAI Logo"
                     class="w-12 h-10">
-                <h1 class="text-2xl lg:text-2xl font-bold text-gray-800 text-center">AI Book <span
-                        class="text-primary">Generator</span></h1>
                 <button id="profile-button" class="text-gray-600 hover:text-gray-800 mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -117,15 +115,31 @@
             </div>
             <form id="book-form" class="space-y-4 lg:space-y-6 flex-grow">
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
+                    <label for="api" class="block mb-2 text-sm font-medium text-gray-700">API</label>
+                    <select id="api" name="api" required
+                        class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                        <option value="together">BookAI LLM (Fastest)</option>
+                        <option value="openai">OpenAI</option>
+                    </select>
+                </div>
+            
+                <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="model" class="block mb-2 text-sm font-medium text-gray-700">Model</label>
                     <select id="model" name="model" required
                         class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-                        <option value="gpt-4o-mini">GPT-4o Mini</option>
-                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        <option value="gpt-4-turbo">GPT-4-turbo</oSption>
-                        <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
+                        <optgroup label="OpenAI Models" id="openai-models">
+                            <option value="gpt-4o-mini">GPT-4o Mini</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            <option value="gpt-4-turbo">GPT-4-turbo</option>
+                            <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (2024-07-18)</option>
+                        </optgroup>
+                        <optgroup label="Together Models" id="together-models">
+                            <option value="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo">BookAI-8B-Instruct-Turbo</option>
+                            <option value="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo">BookAI-70B-Instruct-Turbo</option>
+                        </optgroup>
                     </select>
                 </div>
+                
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="language" class="block mb-2 text-sm font-medium text-gray-700">Language</label>
                     <select id="language" name="language" required
@@ -135,25 +149,26 @@
                         <option value="spanish">Spanish</option>
                     </select>
                 </div>
-
+                
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
                     <label for="topic" class="block mb-2 text-sm font-medium text-gray-700">Book Topic</label>
                     <input type="text" id="topic" name="topic" required
                         class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                         placeholder="Enter your book topic...">
                 </div>
+            
                 <div class="transition-all duration-300 hover:transform hover:scale-105">
-                    <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word
-                        Count</label>
+                    <label for="word_count" class="block mb-2 text-sm font-medium text-gray-700">Target Word Count</label>
                     <input type="number" id="word_count" name="word_count" value="10" required
                         class="w-full p-3 text-sm text-gray-700 bg-gray-50 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
                 </div>
-
+                
                 <button type="submit" id="generate-book"
-                    class="w-full bg-indigo-950	 text-white py-3 rounded-xl hover:bg-indigo-950	-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
+                    class="w-full bg-indigo-950 text-white py-3 rounded-xl hover:bg-indigo-950-700 transition-all duration-300 font-medium transform hover:scale-105 hover:shadow-lg">
                     Generate Book
                 </button>
             </form>
+            
             <div id="progress" class="mt-4 lg:mt-6 text-gray-600 text-center text-sm"></div>
             <div id="error-message"
                 class="mt-4 lg:mt-6 p-4 bg-red-100 text-red-700 rounded-xl text-center font-medium text-sm hidden">
@@ -1302,7 +1317,35 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+        
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const apiSelect = document.getElementById('api');
+            const modelSelect = document.getElementById('model');
+            const openaiModels = document.getElementById('openai-models');
+            const togetherModels = document.getElementById('together-models');
+        
+            function updateModelOptions() {
+                const selectedAPI = apiSelect.value;
+                
+                if (selectedAPI === 'openai') {
+                    openaiModels.style.display = '';
+                    togetherModels.style.display = 'none';
+                    modelSelect.value = openaiModels.querySelector('option').value;
+                } else if (selectedAPI === 'together') {
+                    openaiModels.style.display = 'none';
+                    togetherModels.style.display = '';
+                    modelSelect.value = togetherModels.querySelector('option').value;
+                }
+            }
+        
+            apiSelect.addEventListener('change', updateModelOptions);
+        
+            // Initial call to set the correct options
+            updateModelOptions();
+        });
+        </script>
 </body>
 
 </html>
