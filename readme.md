@@ -2,54 +2,226 @@
 
 BookAI is a revolutionary web application that harnesses the power of artificial intelligence to generate high-quality, professional books in minutes. Our cutting-edge AI technology empowers authors, content creators, and businesses to streamline their writing process and produce market-ready books with unprecedented speed and efficiency.
 
-![BookAI](https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book.png)
+![BookAI](https://raw.githubusercontent.com/adarshagupta/trybookai/main/book.png)
 
-[![GitHub license](https://img.shields.io/github/license/Adarshagupta/BookAI.svg)](https://github.com/Adarshagupta/BookAI/blob/main/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/Adarshagupta/BookAI.svg)](https://github.com/Adarshagupta/BookAI/releases/)
-[![GitHub stars](https://img.shields.io/github/stars/Adarshagupta/BookAI.svg)](https://github.com/Adarshagupta/BookAI/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/Adarshagupta/BookAI.svg)](https://github.com/Adarshagupta/BookAI/issues/)
+[![GitHub license](https://img.shields.io/github/license/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/blob/main/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/releases/)
+[![GitHub stars](https://img.shields.io/github/stars/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/issues/)
 
-## 🌟 Features
+AI-Powered Book Generation and Management System
+================================================
 
-* 📖 Book Generation
-* 🌍 Multiple Language Support
-* 🗣️ Text-to-Speech Functionality
-* 📄 PDF Download
-* 📊 Analytics Dashboard
+Table of Contents
+-----------------
 
-## 🚀 Usage
+1.  [Overview](#overview)
+    
+2.  [Features](#features)
+    
+3.  [Technologies Used](#technologies-used)
+    
+4.  [System Architecture](#system-architecture)
+    
+5.  [API Endpoints](#api-endpoints)
+    
+6.  [Authentication and Security](#authentication-and-security)
+    
+7.  [Database](#database)
+    
+8.  [PDF Generation](#pdf-generation)
+    
+9.  [Email Notifications](#email-notifications)
+    
+10.  [Deployment](#deployment)
+    
 
-### 📚 Generating a Book
+1\. Overview
+------------
 
-1. Access the application at the provided URL.
-2. Fill out the form with the following details:
-   * 🤖 Model: Choose between GPT-3.5 Turbo, GPT-4o Mini, or GPT-4o Mini (2024-07-18)
-   * 🌐 Language: Select English, Hindi (Experimental), or Spanish
-   * 📝 Book Topic: Enter the main subject of your book
-   * 📏 Target Word Count: Specify the desired length of your book
-3. Click "Generate Book" to start the process.
-4. Wait for the generation to complete. Progress will be displayed in real-time.
+This project is an AI-powered book generation and management system that allows users to create, download, and manage AI-generated books. It incorporates various AI models, authentication systems, and database management to provide a comprehensive solution for automated book creation.
 
-### 🗣️ Text-to-Speech
+2\. Features
+------------
 
-1. Once the book is generated, use the play/pause button to start or stop the text-to-speech feature.
-2. Select a voice from the dropdown menu to change the speaking voice.
+*   AI-powered book generation using OpenAI and Together AI models
+    
+*   Multi-language support for book generation
+    
+*   PDF creation and management
+    
+*   User authentication and registration with OTP verification
+    
+*   API key generation for programmatic access
+    
+*   Email notifications for user actions
+    
+*   Progress tracking for book generation
+    
+*   Saved PDF management and download functionality
+    
+*   Web-based user interface for book generation and management
+    
+*   RESTful API for programmatic access to book generation features
+    
 
-### 📥 Downloading the Book
+3\. Technologies Used
+---------------------
 
-1. After generation, click the "Download Your Book" button.
-2. The book will be downloaded as a PDF file.
+*   **Backend**: Python, Flask
+    
+*   **Database**: SQLite
+    
+*   **Authentication**: Firebase Authentication
+    
+*   **AI Models**: OpenAI API, Together AI API
+    
+*   **PDF Generation**: ReportLab
+    
+*   **Email**: Flask-Mail
+    
+*   **Frontend**: HTML, CSS, JavaScript (assumed, not shown in the provided code)
+    
+*   **API Documentation**: Not specified, but could be implemented using Swagger/OpenAPI
+    
+*   **Logging**: Python's built-in logging module
+    
+*   **Environment Variables**: python-dotenv
+    
+*   **Asynchronous Programming**: asyncio, aiohttp
+    
 
-### 📊 Analytics Dashboard
+4\. System Architecture
+-----------------------
 
-After book generation, an analytics dashboard will display:
+The system follows a modular architecture with the following components:
 
-* 📊 Word Count
-* 📈 Readability Score
-* 🏷️ Genre Classification
-* 😊 Sentiment Analysis
+*   Web Server (Flask)
+    
+*   Authentication Service (Firebase)
+    
+*   Database Service (SQLite)
+    
+*   AI Integration Services (OpenAI, Together AI)
+    
+*   PDF Generation Service
+    
+*   Email Notification Service
+    
+*   API Key Management Service
+    
 
-## 💻 Local Setup
+5\. API Endpoints
+-----------------
+
+*   /: Home page
+    
+*   /about: About page
+    
+*   /fr: French version of the home page
+    
+*   /jobs: Jobs page
+    
+*   /playground: Interactive playground
+    
+*   /generate (POST): Generate book content
+    
+*   /progress: Server-Sent Events for progress tracking
+    
+*   /download-pdf (POST): Generate and download PDF
+    
+*   /save-pdf (POST): Save generated PDF
+    
+*   /get-saved-pdfs (GET): Retrieve saved PDFs
+    
+*   /download-saved-pdf/ (GET): Download a specific saved PDF
+    
+*   /generate-api-key (POST): Generate API key for a user
+    
+*   /api/generate-book (POST): API endpoint for book generation
+    
+*   /api: API documentation page
+    
+*   /login (POST): User login
+    
+*   /verify-login (POST): Verify login OTP
+    
+*   /register (POST): User registration
+    
+*   /verify-registration (POST): Verify registration OTP
+    
+*   /auth: Authentication page
+    
+
+6\. Authentication and Security
+-------------------------------
+
+*   Firebase Authentication for user management
+    
+*   OTP (One-Time Password) verification for login and registration
+    
+*   Session management using Flask sessions
+    
+*   API key authentication for programmatic access
+    
+*   HTTPS recommended for production deployment (not implemented in the provided code)
+    
+
+7\. Database
+------------
+
+*   SQLite database for storing PDF metadata and API keys
+    
+*   Tables:
+    
+    *   pdfs: Stores information about generated PDFs
+        
+    *   api\_keys: Stores API keys associated with users
+        
+
+8\. PDF Generation
+------------------
+
+*   Uses ReportLab library to create PDF documents
+    
+*   Supports custom styling and formatting
+    
+*   Generates PDFs from AI-generated content
+    
+
+9\. Email Notifications
+-----------------------
+
+*   Uses Flask-Mail for sending emails
+    
+*   Sends notifications for user registration and login
+    
+*   Sends OTP for user verification
+    
+
+10\. Deployment
+---------------
+
+*   The application is designed to run on a Flask development server
+    
+*   For production, it's recommended to use a production-grade WSGI server like Gunicorn
+    
+*   Environment variables should be properly set in production for sensitive information
+    
+
+Additional Notes
+----------------
+
+*   The system uses asynchronous programming for handling concurrent book generation requests
+    
+*   Progress tracking is implemented using Server-Sent Events
+    
+*   The code includes error handling and logging for better debugging and monitoring
+    
+*   The system is designed to handle rate limiting and API usage tracking
+    
+
+This documentation provides an overview of the main components and features of the AI-powered book generation and management system. For more detailed information on each component or feature, additional documentation may be necessary.
 
 ### Requirements
 
@@ -185,7 +357,7 @@ Show ImageShow ImageShow Image
 🙌 Contributors
 ---------------
 
-[![](https://contrib.rocks/image?repo=Adarshagupta/BookAI)](https://github.com/Adarshagupta/BookAI/graphs/contributors)
+[![](https://contrib.rocks/image?repo=adarshagupta/trybookai)](https://github.com/adarshagupta/trybookai/graphs/contributors)
 
 Made with [contrib.rocks](https://contrib.rocks).
 
