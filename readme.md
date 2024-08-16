@@ -1,369 +1,239 @@
-# 📚 BookAI: AI-Powered Book Generation 🤖
-
-BookAI is a revolutionary web application that harnesses the power of artificial intelligence to generate high-quality, professional books in minutes. Our cutting-edge AI technology empowers authors, content creators, and businesses to streamline their writing process and produce market-ready books with unprecedented speed and efficiency.
-
-![BookAI](https://raw.githubusercontent.com/adarshagupta/trybookai/main/book.png)
-
-[![GitHub license](https://img.shields.io/github/license/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/blob/main/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/releases/)
-[![GitHub stars](https://img.shields.io/github/stars/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/adarshagupta/trybookai.svg)](https://github.com/adarshagupta/trybookai/issues/)
-
-AI-Powered Book Generation and Management System
-================================================
-
-Table of Contents
------------------
-
-1.  [Overview](#overview)
-    
-2.  [Features](#features)
-    
-3.  [Technologies Used](#technologies-used)
-    
-4.  [System Architecture](#system-architecture)
-    
-5.  [API Endpoints](#api-endpoints)
-    
-6.  [Authentication and Security](#authentication-and-security)
-    
-7.  [Database](#database)
-    
-8.  [PDF Generation](#pdf-generation)
-    
-9.  [Email Notifications](#email-notifications)
-    
-10.  [Deployment](#deployment)
-    
-
-1\. Overview
-------------
-
-This project is an AI-powered book generation and management system that allows users to create, download, and manage AI-generated books. It incorporates various AI models, authentication systems, and database management to provide a comprehensive solution for automated book creation.
-
-2\. Features
-------------
-
-*   AI-powered book generation using OpenAI and Together AI models
-    
-*   Multi-language support for book generation
-    
-*   PDF creation and management
-    
-*   User authentication and registration with OTP verification
-    
-*   API key generation for programmatic access
-    
-*   Email notifications for user actions
-    
-*   Progress tracking for book generation
-    
-*   Saved PDF management and download functionality
-    
-*   Web-based user interface for book generation and management
-    
-*   RESTful API for programmatic access to book generation features
-    
-
-3\. Technologies Used
----------------------
-
-*   **Backend**: Python, Flask
-    
-*   **Database**: SQLite
-    
-*   **Authentication**: Firebase Authentication
-    
-*   **AI Models**: OpenAI API, Together AI API
-    
-*   **PDF Generation**: ReportLab
-    
-*   **Email**: Flask-Mail
-    
-*   **Frontend**: HTML, CSS, JavaScript (assumed, not shown in the provided code)
-    
-*   **API Documentation**: Not specified, but could be implemented using Swagger/OpenAPI
-    
-*   **Logging**: Python's built-in logging module
-    
-*   **Environment Variables**: python-dotenv
-    
-*   **Asynchronous Programming**: asyncio, aiohttp
-    
-
-4\. System Architecture
------------------------
-
-The system follows a modular architecture with the following components:
-
-*   Web Server (Flask)
-    
-*   Authentication Service (Firebase)
-    
-*   Database Service (SQLite)
-    
-*   AI Integration Services (OpenAI, Together AI)
-    
-*   PDF Generation Service
-    
-*   Email Notification Service
-    
-*   API Key Management Service
-    
-
-5\. API Endpoints
------------------
-
-*   /: Home page
-    
-*   /about: About page
-    
-*   /fr: French version of the home page
-    
-*   /jobs: Jobs page
-    
-*   /playground: Interactive playground
-    
-*   /generate (POST): Generate book content
-    
-*   /progress: Server-Sent Events for progress tracking
-    
-*   /download-pdf (POST): Generate and download PDF
-    
-*   /save-pdf (POST): Save generated PDF
-    
-*   /get-saved-pdfs (GET): Retrieve saved PDFs
-    
-*   /download-saved-pdf/ (GET): Download a specific saved PDF
-    
-*   /generate-api-key (POST): Generate API key for a user
-    
-*   /api/generate-book (POST): API endpoint for book generation
-    
-*   /api: API documentation page
-    
-*   /login (POST): User login
-    
-*   /verify-login (POST): Verify login OTP
-    
-*   /register (POST): User registration
-    
-*   /verify-registration (POST): Verify registration OTP
-    
-*   /auth: Authentication page
-    
-
-6\. Authentication and Security
--------------------------------
-
-*   Firebase Authentication for user management
-    
-*   OTP (One-Time Password) verification for login and registration
-    
-*   Session management using Flask sessions
-    
-*   API key authentication for programmatic access
-    
-*   HTTPS recommended for production deployment (not implemented in the provided code)
-    
-
-7\. Database
-------------
-
-*   SQLite database for storing PDF metadata and API keys
-    
-*   Tables:
-    
-    *   pdfs: Stores information about generated PDFs
-        
-    *   api\_keys: Stores API keys associated with users
-        
-
-8\. PDF Generation
-------------------
-
-*   Uses ReportLab library to create PDF documents
-    
-*   Supports custom styling and formatting
-    
-*   Generates PDFs from AI-generated content
-    
-
-9\. Email Notifications
------------------------
-
-*   Uses Flask-Mail for sending emails
-    
-*   Sends notifications for user registration and login
-    
-*   Sends OTP for user verification
-    
-
-10\. Deployment
----------------
-
-*   The application is designed to run on a Flask development server
-    
-*   For production, it's recommended to use a production-grade WSGI server like Gunicorn
-    
-*   Environment variables should be properly set in production for sensitive information
-    
-
-Additional Notes
-----------------
-
-*   The system uses asynchronous programming for handling concurrent book generation requests
-    
-*   Progress tracking is implemented using Server-Sent Events
-    
-*   The code includes error handling and logging for better debugging and monitoring
-    
-*   The system is designed to handle rate limiting and API usage tracking
-    
-
-This documentation provides an overview of the main components and features of the AI-powered book generation and management system. For more detailed information on each component or feature, additional documentation may be necessary.
-
-### Requirements
-
-* Python 3.7+
-* pip (Python package manager)
-* OpenAI API key
-
-### Installation Steps
-
-1. ```bash
-   git clone https://github.com/your-repo/ai-book-generator.git
-   cd ai-book-generator```
-   
-
-### Set up virtual environment
-```
-python -m venv venv
-source venv/bin/activate # On Windows use `venv\Scripts\activate`
-```
-
-### Install dependencies
-```
-pip install -r requirements.txt
-```
-
-### Set OpenAI API key
-```
-export OPENAI_API_KEY=your_api_key_here
-```
-
-### Run the application4
-```
-python app.py
-```
-
-# Open a web browser and navigate to http://localhost:5000
-
-### Docker Setup
-### Requirements:
-#### * Docker installed on your system
-#### * OpenAI API key
-
-### Build Docker image
-```
-docker build -t ai-book-generator .
-```
-
-### Run Docker container
-```
-docker run -p 5000:5000 -e OPENAI_API_KEY=your_api_key_here ai-book-generator
-```
-
-#### Access the application by opening a web browser and navigating to http://localhost:5000
-
-Note: Make sure to replace your\_api\_key\_here with your actual OpenAI API key when running the container.
-
-🛠️ Technical Details
----------------------
-
-### Frontend
-
-*   HTML5, CSS3 (Tailwind CSS), JavaScript (jQuery)
-    
-*   Responsive design for various screen sizes
-    
-*   Uses server-sent events for real-time progress updates
-    
-
-### Backend
-
-*   Python Flask server
-    
-*   Asynchronous book generation using aiohttp
-    
-*   OpenAI API integration for content generation
-    
-*   ReportLab for PDF creation
-    
-
-### API Endpoints
-
-*   /generate (POST): Initiates book generation
-    
-*   /progress (GET): Provides real-time generation progress
-    
-*   /download-pdf (POST): Creates and serves the PDF file
-    
-
-⚠️ Known Limitations
---------------------
-
-*   Hindi language support is experimental and may have inconsistencies
-    
-*   Generation time increases with higher word counts
-    
-*   API rate limits may affect generation speed for longer books
-    
-
-🔧 Troubleshooting
-------------------
-
-If you encounter issues:
-
-1.  Ensure you have a stable internet connection
-    
-2.  Check if the OpenAI API is operational
-    
-3.  For persistent problems, contact support with error details displayed on the page
-    
-
-🔮 Future Enhancements
-----------------------
-
-*   Support for more languages
-    
-*   Integration with additional AI models
-    
-*   Enhanced analytics and content optimization features
-    
-*   Audio book download functionality (coming soon)
-    
-
-🖼️ Demo Images
----------------
-
-Show ImageShow ImageShow Image
-
-🏆 Featured on ProductHunt
---------------------------
-
-[![BookAI - AI-powered book generation in minutes | Product Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=123456&theme=light)](https://www.producthunt.com/posts/bookai?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-bookai)
-
-🙌 Contributors
----------------
-
-[![](https://contrib.rocks/image?repo=adarshagupta/trybookai)](https://github.com/adarshagupta/trybookai/graphs/contributors)
-
-Made with [contrib.rocks](https://contrib.rocks).
-
-📄 License
-----------
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML
+# 📚 AI Book Generator Documentation 📚
+
+## 📖 Table of Contents 📖
+
+1. [Introduction](#introduction)
+2. [Features](#features)
+3. [Technologies Used](#technologies-used)
+4. [Installation](#installation)
+5. [Configuration](#configuration)
+6. [Usage](#usage)
+    - [Generating a Book](#generating-a-book)
+    - [Downloading a PDF](#downloading-a-pdf)
+    - [Managing API Keys](#managing-api-keys)
+    - [User Authentication](#user-authentication)
+    - [Generating Images](#generating-images)
+7. [API Documentation](#api-documentation)
+8. [Troubleshooting](#troubleshooting)
+9. [Contributing](#contributing)
+10. [License](#license)
+
+## 🚀 Introduction 🚀
+
+The AI Book Generator is a powerful web application that leverages AI models from OpenAI and Together to generate detailed books on a wide range of topics. Users can customize their book's content, language, and length, and then download the final product as a PDF. The application also includes features for API key management, user authentication via Firebase, and image generation using the Hugging Face API.
+
+![Book Image](https://raw.githubusercontent.com/Adarshagupta/BookAI/main/book2.png?token=GHSAT0AAAAAACWCFWSSAQBCSFRZANHDBDYQZV7CQNA)
+
+## ✨ Features ✨
+
+- **Book Generation**: Utilize AI models to generate comprehensive books on any topic.
+- **Language Customization**: Choose the language for your book's content.
+- **Word Count Control**: Specify the target word count for your book.
+- **PDF Download**: Save and download your generated book as a PDF.
+- **API Key Management**: Generate and manage API keys for secure access to the book generation API.
+- **User Authentication**: Secure user registration and login using Firebase.
+- **Image Generation**: Generate images based on text prompts using the Hugging Face API.
+
+## 🛠️ Technologies Used 🛠️
+
+- **Flask**: A lightweight WSGI web application framework in Python.
+- **OpenAI API**: Provides access to advanced AI models for text generation.
+- **Together API**: Another AI service for text generation.
+- **Hugging Face API**: Used for generating images from text prompts.
+- **Firebase**: For secure user authentication and management.
+- **SQLite**: A lightweight, serverless database used for storing PDF metadata and API keys.
+- **ReportLab**: A library for creating PDFs from dynamic data.
+- **aiohttp**: An asynchronous HTTP client/server for Python.
+- **asyncio**: Python library for writing single-threaded concurrent code using coroutines.
+
+## 📦 Installation 📦
+
+### Prerequisites
+
+- Python 3.7+
+- pip (Python package installer)
+- Virtualenv (optional but recommended)
+
+### Steps
+
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-repo/ai-book-generator.git
+    cd ai-book-generator
+    ```
+
+2. **Set up a virtual environment**:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
+
+3. **Install dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. **Set environment variables**:
+    Create a `.env` file in the root directory and add the following:
+    ```
+    OPENAI_API_KEY=your_openai_api_key
+    TOGETHER_API_KEY=your_together_api_key
+    GETIMG_API_KEY=your_getimg_api_key
+    ```
+
+5. **Initialize the database**:
+    ```bash
+    python
+    >>> from app import init_db
+    >>> init_db()
+    >>> exit()
+    ```
+
+6. **Run the application**:
+    ```bash
+    flask run
+    ```
+
+## ⚙️ Configuration ⚙️
+
+The application uses environment variables for configuration. Ensure that the following variables are set in your `.env` file:
+
+- `OPENAI_API_KEY`: Your OpenAI API key.
+- `TOGETHER_API_KEY`: Your Together API key.
+- `GETIMG_API_KEY`: Your Hugging Face API key.
+
+## 📚 Usage 📚
+
+### Generating a Book
+
+1. **Access the web application**:
+    Open your browser and navigate to `http://localhost:5000`.
+
+2. **Navigate to the playground**:
+    Click on the "Playground" link in the navigation menu.
+
+3. **Select your preferences**:
+    - Choose the AI model (OpenAI or Together).
+    - Enter the topic for your book.
+    - Select the language.
+    - Specify the target word count.
+
+4. **Generate the book**:
+    Click on the "Generate Book" button. The progress of the book generation will be displayed.
+
+### Downloading a PDF
+
+1. **Once the book is generated**:
+    The content will be displayed on the screen.
+
+2. **Download the PDF**:
+    Click on the "Download PDF" button to save the book as a PDF file.
+
+### Managing API Keys
+
+1. **Navigate to the API page**:
+    Click on the "API" link in the navigation menu.
+
+2. **Generate a new API key**:
+    Click on the "Generate API Key" button. Your new API key will be displayed.
+
+3. **View and manage your API keys**:
+    Your existing API keys will be listed on the page. You can revoke or regenerate keys as needed.
+
+### User Authentication
+
+1. **Register a new account**:
+    - Navigate to the "Auth" page.
+    - Click on the "Register" button.
+    - Enter your email, password, and phone number.
+    - Click on the "Register" button to create your account.
+
+2. **Log in to your account**:
+    - Navigate to the "Auth" page.
+    - Click on the "Login" button.
+    - Enter your email and password.
+    - Click on the "Login" button to access your account.
+
+### Generating Images
+
+1. **Navigate to the image generation page**:
+    Click on the "Generate Image" link in the navigation menu.
+
+2. **Enter a text prompt**:
+    Type a description of the image you want to generate.
+
+3. **Generate the image**:
+    Click on the "Generate Image" button. The generated image will be displayed on the screen.
+
+## 📜 API Documentation 📜
+
+The API allows for programmatic access to the book generation functionality. Refer to the [API Documentation](#api-documentation) for detailed information on available endpoints and how to use them.
+
+### Endpoints
+
+- **POST /generate-book**: Generate a book using the specified AI model, topic, language, and word count.
+- **POST /generate-api-key**: Generate a new API key for accessing the API.
+- **POST /generate-image**: Generate an image based on a text prompt.
+
+### Request Format
+
+- **Generate Book**:
+    ```json
+    {
+        "api": "openai",
+        "model": "gpt-3.5-turbo",
+        "topic": "Artificial Intelligence",
+        "language": "English",
+        "word_count": 5000
+    }
+    ```
+
+- **Generate API Key**:
+    ```json
+    {}
+    ```
+
+- **Generate Image**:
+    ```json
+    {
+        "prompt": "A futuristic cityscape at night"
+    }
+    ```
+
+### Response Format
+
+- **Generate Book**:
+    ```json
+    {
+        "content": "Book content here...",
+        "word_count": 5000
+    }
+    ```
+
+- **Generate API Key**:
+    ```json
+    {
+        "api_key": "your_new_api_key"
+    }
+    ```
+
+- **Generate Image**:
+    ```json
+    {
+        "output": "data:image/png;base64,image_data_here"
+    }
+    ```
+
+## 🔧 Troubleshooting 🔧
+
+- **API Key Issues**: Ensure that your API keys are correctly set in the `.env` file and are valid.
+- **Database Issues**: If you encounter issues with the database, ensure that the SQLite database is correctly initialized and accessible.
+- **Authentication Issues**: If you have trouble logging in or registering, ensure that your Firebase credentials are correctly configured.
+
+## 🤝 Contributing 🤝
+
+Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) before getting started.
+
+## 📄 License 📄
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
